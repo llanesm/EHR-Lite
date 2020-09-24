@@ -2,4 +2,6 @@
 ## A "Lite" EHR System done in Python/Flask
 ### By Kevin Benoit and Matthew Llanes
 
-*Credit to knightsamar/CS340_starter_flask_app for initial repo for initial webapp setup*
+This webapp branch is meant for hosting on OSU server
+
+*Credit to knightsamar/CS340_starter_flask_app repo for initial webapp setup*
