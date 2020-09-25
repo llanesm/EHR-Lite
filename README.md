@@ -22,7 +22,7 @@ python -m flask run -h 0.0.0.0 -p XXXX --reload
 '''
 Replace XXXX with port number
 
-Website will be at http://flipN.engr.oregonstate.edu:XXXX*
+Website will be at http://flipN.engr.oregonstate.edu:XXXX
 Remember what putty flip you are in, N = 1, 2, or 3
 
 
