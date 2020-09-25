@@ -14,7 +14,7 @@ pip install -r requirements.txt
 ```
 Then change db_credentials.py to your credentials
 
-###For routine coding:
+### For routine coding:
 ```bash
 source ./venv/bin/activate
 export FLASK_APP=run.py
@@ -26,13 +26,13 @@ Website will be at http://flipN.engr.oregonstate.edu:XXXX
 Remember what putty flip you are in, N = 1, 2, or 3
 
 
-###To run persistently:
+### To run persistently:
 ```bash
 gunicorn run:webapp -b 0.0.0.0:XXXX -D
 ```
 
 
-###To kill old gunicorn:
+### To kill old gunicorn:
 ```bash
 ps ufx | grep gunicorn
 ```
