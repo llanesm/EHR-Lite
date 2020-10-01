@@ -1,0 +1,4 @@
+db_credentials.py
+*.pyc
+.vscode/
+venv/
