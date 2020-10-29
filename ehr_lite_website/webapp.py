@@ -27,14 +27,17 @@ def home():
             return redirect(url_for('providers')) #pass id number here for redirect
 
         #if routing to patient
+        #TODO: 2 patient pages, those who have an existing id (are in the db) and those who need to create a new patient
         elif request.form['userType'] =="patient":
             print("PRINT: userTYPE: ")
             print(request.form['userType'], file=sys.stdout)
             return redirect(url_for('patient')) #pass id number here for redirect
 
-        #else reroute back TODO: FIX THIS BREAKS
-        else:
-            return redirect(url_for('home'))
+        #TODO: ADD HTML PAGE
+        elif request.form['userType'] =="admin":
+            print("PRINT: userTYPE: ")
+            print(request.form['userType'], file=sys.stdout)
+            return redirect(url_for('admin')) #pass id number here for redirect
 
     return render_template('home.html')
 
@@ -49,3 +52,10 @@ def providers():
     db_connection = connect_to_database()
 
     return render_template('providers.html')
+
+@webapp.route('/admin')
+def admin():
+    #setup for connecting to our database
+    db_connection = connect_to_database()
+
+    return render_template('admin.html')
