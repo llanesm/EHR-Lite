@@ -14,11 +14,15 @@ def hello():
 
 @webapp.route('/')
 def index():
-    return "<p> This will be our front page</p>"
+    return render_template('home.html')
 
-@webapp.route('/home')
+@webapp.route('/patients')
+def index():
+    return render_template('patients.html')
+
+@webapp.route('/providers')
 def home():
     #setup for connecting to our database
     db_connection = connect_to_database()
 
-    return render_template('home.html')
+    return render_template('providers.html')
