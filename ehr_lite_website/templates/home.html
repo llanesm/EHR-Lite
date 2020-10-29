@@ -1,6 +1,17 @@
-<h1>Todo: Plan our Project</h1>
-<p>
+<h1> EHR-Lite Homepage</h1>
+    <!-- TEMP: place a form around this vvv, use Python with radio box for proper routing -->
+    <form name="homeForm" action="" method ="POST">
+        <label for="userID">User Identification #:</label>
+        <input type="text" id="userID" name="uerID"><br>
 
-    Then design the html, maybe use forms? grid?
+        <input type="radio" id="patient" name="userType" value="patient">
+        <label for="patient">Patient ID</label><br>
 
-</p>
+        <input type="radio" id="providers" name="userType" value="providers">
+        <label for="provider">Provider ID</label><br>
+
+        <input type="radio" id="admin" name="userType" value="admin">
+        <label for="admin">Admin ID</label><br>
+        <input type="submit" value="Submit">
+    </form>
+    <!-- TEMP: place a form around this ^^^, use Python with radio box for proper routing -->
