@@ -1,0 +1,15 @@
+h1 {
+    background-color: red;
+    display: flex;
+    justify-content: center;
+    color: red;
+}
+
+body{
+
+    background-color: green;
+}
+
+.container{
+    background-color: blue;
+}
