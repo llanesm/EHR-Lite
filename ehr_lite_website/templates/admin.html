@@ -2,139 +2,148 @@
 {% block body %}
 <h1>MAX HEALTH EHR</h1>
 <h2>Administration Portal</h2>
-<div>
-    <h3>New Provider</h3>
-    <form>
-        <label for="newProviderFirstName">First Name</label>
-        <input type="text" id="newProviderFirstName" name="fname"><br>
-        <label for="newProviderLastName">Last Name</label>
-        <input type="text" id="newProviderLastName" name="lname"><br>
-        <label for="newProviderLicenseType">License Type</label>
-        <input type="text" id="newProviderLicenseType" name="licenseType"><br>
-        <label for="newProviderLicenseNumber">License Number</label>
-        <input type="number" id="newProviderLicenseNumber" name="licenseNumber"><br>
-        <label for="newProviderSpecialty">Specialty</label>
-        <input type="text" id="newProviderSpecialty" name="specialty"><br>
-        <p>Is this a primary care provider?</p>
-        <label for="providerTrue">True</label>
-        <input type="radio" id="providerTrue" name="primaryCare" value="True">
-        <label for="providerFalse">False</label>
-        <input type="radio" id="providerFalse" name="primaryCare" value="False"><br>
-        <input type="submit" value="Add New Provider"
-    </form>
+<div id="adminProviders">
+    <div>
+        <h3>New Provider</h3>
+        <form>
+            <label for="newProviderFirstName">First Name</label>
+            <input type="text" id="newProviderFirstName" name="fname"><br>
+            <label for="newProviderLastName">Last Name</label>
+            <input type="text" id="newProviderLastName" name="lname"><br>
+            <label for="newProviderLicenseType">License Type</label>
+            <input type="text" id="newProviderLicenseType" name="licenseType"><br>
+            <label for="newProviderLicenseNumber">License Number</label>
+            <input type="number" id="newProviderLicenseNumber" name="licenseNumber"><br>
+            <label for="newProviderSpecialty">Specialty</label>
+            <input type="text" id="newProviderSpecialty" name="specialty"><br>
+            <p>Is this a primary care provider?</p>
+            <label for="providerTrue">True</label>
+            <input type="radio" id="providerTrue" name="primaryCare" value="True">
+            <label for="providerFalse">False</label>
+            <input type="radio" id="providerFalse" name="primaryCare" value="False"><br>
+            <input type="submit" value="Add New Provider"
+        </form>
+    </div>
+    <div>
+        <h3>Update Provider Information</h3>
+        <form>
+            <label for="updatingProviderID">Enter Provider ID</label>
+            <input type="number" id="updatingProviderID" name="providerID">
+            <input type="submit" value="Submit">
+        </form><br>
+        <form>
+            <label for="updatedProviderLastName">Last Name</label>
+            <input type="text" id="updatedProviderLastName" name="lname"><br>
+            <label for="updatedProviderLicenseType">License Type</label>
+            <input type="text" id="updatedProviderLicenseType" name="licenseType"><br>
+            <label for="updatedProviderLicenseNumber">License Number</label>
+            <input type="number" id="updatedProviderLicenseNumber" name="licenseNumber"><br>
+            <label for="updatedProviderSpecialty">Specialty</label>
+            <input type="text" id="updatedProviderSpecialty" name="specialty"><br>
+            <p>Is this a primary care provider?</p>
+            <label for="updateProviderTrue">True</label>
+            <input type="radio" id="updateProviderTrue" name="primaryCare" value="True">
+            <label for="updateProviderFalse">False</label>
+            <input type="radio" id="updateProviderFalse" name="primaryCare" value="False"><br>
+            <input type="submit" value="Update Provider Info"
+        </form>
+    </div>
+    <div>
+        <h3>Remove Provider</h3>
+        <form>
+            <label for="deletingProviderID">Enter Provider ID</label>
+            <input type="number" id="deletingProviderID" name="providerID"><br>
+            <input type="submit" value="Remove Provider from System">
+        </form>
+    </div>
 </div>
-<div>
-    <h3>Update Provider Information</h3>
-    <form>
-        <label for="updatingProviderID">Enter Provider ID</label>
-        <input type="number" id="updatingProviderID" name="providerID">
-        <input type="submit" value="Submit">
-    </form><br>
-    <form>
-        <label for="updatedProviderLastName">Last Name</label>
-        <input type="text" id="updatedProviderLastName" name="lname"><br>
-        <label for="updatedProviderLicenseType">License Type</label>
-        <input type="text" id="updatedProviderLicenseType" name="licenseType"><br>
-        <label for="updatedProviderLicenseNumber">License Number</label>
-        <input type="number" id="updatedProviderLicenseNumber" name="licenseNumber"><br>
-        <label for="updatedProviderSpecialty">Specialty</label>
-        <input type="text" id="updatedProviderSpecialty" name="specialty"><br>
-        <p>Is this a primary care provider?</p>
-        <label for="updateProviderTrue">True</label>
-        <input type="radio" id="updateProviderTrue" name="primaryCare" value="True">
-        <label for="updateProviderFalse">False</label>
-        <input type="radio" id="updateProviderFalse" name="primaryCare" value="False"><br>
-        <input type="submit" value="Update Provider Info"
-    </form>
+
+<div id="adminClinics">
+    <div>
+        <h3>New Clinic</h3>
+        <form>
+            <label for="newClinicSpecialty">Specialty</label>
+            <input type="text" id="newClinicSpecialty" name="specialty"><br>
+            <label for="newClinicProviderCapacity">Provider Capacity</label>
+            <input type="number" id="newClinicProviderCapacity" name="providerCapacity"><br>
+            <label for="newClinicExamRooms">Number of Exam Rooms</label>
+            <input type="number" id="newClinicExamRooms" name="examRooms"><br>
+            <p>Is this a primary care clinic?</p>
+            <label for="clinicTrue">True</label>
+            <input type="radio" id="clinicTrue" name="primaryCare" value="True">
+            <label for="clinicFalse">False</label>
+            <input type="radio" id="clinicFalse" name="primaryCare" value="False"><br>
+            <input type="submit" value="Add Clinic to System"
+        </form>
+    </div>
+    <div>
+        <h3>Update Clinic</h3>
+        <form>
+            <label for="updatingClinicID">Enter Clinic ID</label>
+            <input type="number" id="updatingClinicID" name="clinicID">
+            <input type="submit" value="Submit"
+        </form><br>
+        <form>
+            <label for="updatedClinicSpecialty">Specialty</label>
+            <input type="text" id="updatedClinicSpecialty" name="specialty"><br>
+            <label for="updatedClinicProviderCapacity">Provider Capacity</label>
+            <input type="number" id="updatedClinicProviderCapacity" name="providerCapacity"><br>
+            <label for="updatedClinicExamRooms">Number of Exam Rooms</label>
+            <input type="number" id="updatedClinicExamRooms" name="examRooms"><br>
+            <p>Is this a primary care clinic?</p>
+            <label for="updatedClinicTrue">True</label>
+            <input type="radio" id="updatedClinicTrue" name="primaryCare" value="True">
+            <label for="updatedClinicFalse">False</label>
+            <input type="radio" id="updatedClinicFalse" name="primaryCare" value="False"><br>
+            <input type="submit" value="Update Clinic Info"
+        </form>
+    </div>
+    <div>
+        <h3>Remove Clinic</h3>
+        <form>
+            <label for="deletingClinicID">Enter Clinic ID</label>
+            <input type="number" id="deletingClinicID" name="clinicID"><br>
+            <input type="submit" value="Remove Clinic from System"
+        </form>
+    </div>
 </div>
-<div>
-    <h3>Remove Provider</h3>
-    <form>
-        <label for="deletingProviderID">Enter Provider ID</label>
-        <input type="number" id="deletingProviderID" name="providerID"><br>
-        <input type="submit" value="Remove Provider from System">
-    </form>
+
+<div id="adminTables">
+    <div>
+        <h3>View All Patients of a Clinic</h3>
+        <form>
+            <label for="clinicsPatients">Enter Clinic ID</label>
+            <input type="number" id="clinicsPatients" name="clinicID">
+            <input type="submit" value="Submit">
+        </form><br>
+        <table>
+            <tr>
+                <th>Patient</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birth Date</th>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <h3>View All Providers of a Clinic</h3>
+        <form>
+            <label for="clinicsProviders">Enter Clinic ID</label>
+            <input type="number" id="clinicsProviders" name="clinicID">
+            <input type="submit" value="Submit">
+        </form><br>
+        <table>
+            <tr>
+                <th>Provider</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>License Type</th>
+                <th>License Number</th>
+                <th>Specialty</th>
+                <th>Primary Care</th>
+            </tr>
+        </table>
+    </div>
 </div>
-<div>
-    <h3>New Clinic</h3>
-    <form>
-        <label for="newClinicSpecialty">Specialty</label>
-        <input type="text" id="newClinicSpecialty" name="specialty"><br>
-        <label for="newClinicProviderCapacity">Provider Capacity</label>
-        <input type="number" id="newClinicProviderCapacity" name="providerCapacity"><br>
-        <label for="newClinicExamRooms">Number of Exam Rooms</label>
-        <input type="number" id="newClinicExamRooms" name="examRooms"><br>
-        <p>Is this a primary care clinic?</p>
-        <label for="clinicTrue">True</label>
-        <input type="radio" id="clinicTrue" name="primaryCare" value="True">
-        <label for="clinicFalse">False</label>
-        <input type="radio" id="clinicFalse" name="primaryCare" value="False"><br>
-        <input type="submit" value="Add Clinic to System"
-    </form>
-</div>
-<div>
-    <h3>Update Clinic</h3>
-    <form>
-        <label for="updatingClinicID">Enter Clinic ID</label>
-        <input type="number" id="updatingClinicID" name="clinicID">
-        <input type="submit" value="Submit"
-    </form><br>
-    <form>
-        <label for="updatedClinicSpecialty">Specialty</label>
-        <input type="text" id="updatedClinicSpecialty" name="specialty"><br>
-        <label for="updatedClinicProviderCapacity">Provider Capacity</label>
-        <input type="number" id="updatedClinicProviderCapacity" name="providerCapacity"><br>
-        <label for="updatedClinicExamRooms">Number of Exam Rooms</label>
-        <input type="number" id="updatedClinicExamRooms" name="examRooms"><br>
-        <p>Is this a primary care clinic?</p>
-        <label for="updatedClinicTrue">True</label>
-        <input type="radio" id="updatedClinicTrue" name="primaryCare" value="True">
-        <label for="updatedClinicFalse">False</label>
-        <input type="radio" id="updatedClinicFalse" name="primaryCare" value="False"><br>
-        <input type="submit" value="Update Clinic Info"
-    </form>
-</div>
-<div>
-    <h3>Remove Clinic</h3>
-    <form>
-        <label for="deletingClinicID">Enter Clinic ID</label>
-        <input type="number" id="deletingClinicID" name="clinicID"><br>
-        <input type="submit" value="Remove Clinic from System"
-    </form>
-</div>
-<div>
-    <h3>View All Patients of a Clinic</h3>
-    <form>
-        <label for="clinicsPatients">Enter Clinic ID</label>
-        <input type="number" id="clinicsPatients" name="clinicID">
-        <input type="submit" value="Submit">
-    </form><br>
-    <table>
-        <tr>
-            <th>Patient</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Birth Date</th>
-        </tr>
-    </table>
-</div>
-<div>
-    <h3>View All Providers of a Clinic</h3>
-    <form>
-        <label for="clinicsProviders">Enter Clinic ID</label>
-        <input type="number" id="clinicsProviders" name="clinicID">
-        <input type="submit" value="Submit">
-    </form><br>
-    <table>
-        <tr>
-            <th>Provider</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>License Type</th>
-            <th>License Number</th>
-            <th>Specialty</th>
-            <th>Primary Care</th>
-        </tr>
-    </table>
-</div>
+
 {% endblock %}

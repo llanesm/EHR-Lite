@@ -53,3 +53,25 @@ table, th, td{
     display: flex;
     justify-content: space-evenly;
 }
+
+
+#adminProviders{
+    display: flex;
+    justify-self: space-between;
+    border: 1px solid black;
+    margin: 3px;
+    padding: 5px;
+}
+
+#adminClinics{
+    display: flex;
+    justify-self: space-between;
+    border: 1px solid black;
+    margin: 3px;
+    padding: 5px;
+}
+
+#adminTables{
+    display: flex;
+    justify-content: space-evenly;
+}
