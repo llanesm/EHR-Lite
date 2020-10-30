@@ -1,152 +1,147 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Providers Page</title>
-</head>
-<body>
-    <h1>MAX HEALTH EHR</h1>
-    <h2>Provider/Clinic Portal</h2>
-    <div>
-        <h3>New Patient</h3>
-        <form>
-            <label for="newPatientFirstName">First Name</label>
-            <input type="text" id="newPatientFirstName" name="fname"><br>
-            <label for="newPatientLastName">Last Name</label>
-            <input type="text" id="newPatientLastName" name="lname"><br>
-            <label for="newPatientBirthdate">Birthdate</label>
-            <input type="date" id="newPatientBirthdate" name="birthdate"><br>
-            <label for="primaryCarePhysician">Primary Care Physician</label>
-            <input type="text" id="primaryCarePhysician" name="primaryCarePhysician"><br>
-            <label for="preferredPharmacy">Preferred Pharmacy</label>
-            <input type="text" id="preferredPharmacy" name="preferredPharmacy"><br>
-            <input type="submit" value="Add New Patient">
-        </form>
-    </div>
-    <div>
-        <h3>Update Patient Information</h3>
-        <form>
-            <label for="lookupPatientID">Enter ID of Patient to update</label>
-            <input type="number" id="lookupPatientID" name="patientID">
-            <input type="submit" value="Submit"
-        </form><br>
-        <form>
-            <label for="updatePatientFirstName">First Name</label>
-            <input type="text" id="updatePatientFirstName" name="fname"><br>
-            <label for="updatePatientLastName">Last Name</label>
-            <input type="text" id="updatePatientLastName" name="lname"><br>
-            <label for="updatePatientBirthdate">Birthdate</label>
-            <input type="date" id="updatePatientBirthdate" name="birthdate"><br>
-            <label for="newPrimaryCarePhysician">Primary Care Physician</label>
-            <input type="text" id="newPrimaryCarePhysician" name="primaryCarePhysician"><br>
-            <label for="newPreferredPharmacy">Preferred Pharmacy</label>
-            <input type="text" id="newPreferredPharmacy" name="preferredPharmacy"><br>
-            <input type="submit" value="Update Info">
-        </form>
-    </div>
-    <div>
-        <h3>Discharge Patient</h3>
-        <form>
-            <label for="medicalRecordNumber">Enter Patient Medical Record Number</label>
-            <input type="number" id="medicalRecordNumber" name="medicalRecordNumber">
-            <input type="submit" value="Discharge Patient">
-        </form>
-    </div>
-    <div>
-        <h3>New Visit</h3>
-        <form>
-            <label for="newVisitDate">Date</label>
-            <input type="date" id="newVisitDate" name="visitDate"><br>
-            <label for="chiefComplaint">Chief Complaint</label>
-            <input type="text" id="chiefComplaint" name="chiefComplaint"><br>
-            <label for="diagnosisCode">Diagnosis</label>
-            <input type="number" id="diagnosisCode" name="diagnosisCode"><br>
-            <label for="procedureCode">Procedure</label>
-            <input type="number" id="procedureCode" name="procedureCode"><br>
-            <label for="patient">Patient ID</label>
-            <input type="number" id="patient" name="patientID"><br>
-            <label for="clinic">Clinic ID</label>
-            <input type="number" id="clinic"><br>
-            <label for="provider">Provider ID</label>
-            <input type="number" id="provider"><br>
-            <label for="providerNotes">Notes</label>
-            <input type="text" id="providerNotes"><br>
-            <input type="submit" value="Submit">
-        </form>
-    </div>
-    <div>
-        <h3>Update Visit Information</h3>
-        <form>
-            <label for="visitAccountNumber">Enter Account Number</label>
-            <input type="number" id="visitAccountNumber" name="accountNumber">
-            <input type="submit" value="Submit">
-        </form><br>
-        <form>
-            <label for="updateVisitDate">Date</label>
-            <input type="date" id="updateVisitDate" name="visitDate"><br>
-            <label for="updateChiefComplaint">Chief Complaint</label>
-            <input type="text" id="updateChiefComplaint" name="chiefComplaint"><br>
-            <label for="newDiagnosisCode">Diagnosis</label>
-            <input type="number" id="newDiagnosisCode" name="diagnosisCode"><br>
-            <label for="newProcedureCode">Procedure</label>
-            <input type="number" id="newProcedureCode" name="procedureCode"><br>
-            <label for="patient">Patient ID</label>
-            <input type="number" id="patient" name="patientID"><br>
-            <label for="clinic">Clinic ID</label>
-            <input type="number" id="clinic"><br>
-            <label for="provider">Provider ID</label>
-            <input type="number" id="provider"><br>
-            <label for="providerNotes">Notes</label>
-            <input type="text" id="providerNotes"><br>
-            <input type="submit" value="Submit">
-        </form>
-    </div>
-    <div>
-        <h3>Delete Visit</h3>
-        <form>
-            <label for="deleteAccountNumber">Account Number</label>
-            <input type="number" id="deleteAccountNumber" name="accountNumber">
-            <input type="submit" value="Delete Visit">
-        </form>
-    </div>
-    <div>
-        <h3>View Visits by Date</h3>
-        <form>
-            <label for="byVisitDate">Enter Date</label>
-            <input type="date" id="byVisitDate" name="visitDate"><br>
-            <input type="submit" value="Submit">
-        </form>
-        <table>
-            <tr>
-                <th>Account Number</th>
-                <th>Patient</th>
-                <th>Chief Complaint</th>
-                <th>Clinic</th>
-                <th>Diagnosis</th>
-                <th>Procedure</th>
-                <th>Provider</th>
-                <th>Notes</th>
-            </tr>
-        </table>
-    </div>
-    <div>
-        <h3>View Patients of Provider</h3>
-        <form>
-            <label for="byProvider">Enter Provider ID</label>
-            <input type="number" id="byProvider" name="providerID"><br>
-            <input type="submit" value="Submit"
-        </form>
-        <table>
-            <tr>
-                <th>MRN</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Birth Date</th>
-                <th>PCP</th>
-                <th>Preferred Pharmacy</th>
-            </tr>
-        </table>
-    </div>
-</body>
-</html>
+{% extends "layouts/main.html" %}
+{% block body %}
+
+<h1>MAX HEALTH EHR</h1>
+<h2>Provider/Clinic Portal</h2>
+<div>
+    <h3>New Patient</h3>
+    <form>
+        <label for="newPatientFirstName">First Name</label>
+        <input type="text" id="newPatientFirstName" name="fname"><br>
+        <label for="newPatientLastName">Last Name</label>
+        <input type="text" id="newPatientLastName" name="lname"><br>
+        <label for="newPatientBirthdate">Birthdate</label>
+        <input type="date" id="newPatientBirthdate" name="birthdate"><br>
+        <label for="primaryCarePhysician">Primary Care Physician</label>
+        <input type="text" id="primaryCarePhysician" name="primaryCarePhysician"><br>
+        <label for="preferredPharmacy">Preferred Pharmacy</label>
+        <input type="text" id="preferredPharmacy" name="preferredPharmacy"><br>
+        <input type="submit" value="Add New Patient">
+    </form>
+</div>
+<div>
+    <h3>Update Patient Information</h3>
+    <form>
+        <label for="lookupPatientID">Enter ID of Patient to update</label>
+        <input type="number" id="lookupPatientID" name="patientID">
+        <input type="submit" value="Submit"
+    </form><br>
+    <form>
+        <label for="updatePatientFirstName">First Name</label>
+        <input type="text" id="updatePatientFirstName" name="fname"><br>
+        <label for="updatePatientLastName">Last Name</label>
+        <input type="text" id="updatePatientLastName" name="lname"><br>
+        <label for="updatePatientBirthdate">Birthdate</label>
+        <input type="date" id="updatePatientBirthdate" name="birthdate"><br>
+        <label for="newPrimaryCarePhysician">Primary Care Physician</label>
+        <input type="text" id="newPrimaryCarePhysician" name="primaryCarePhysician"><br>
+        <label for="newPreferredPharmacy">Preferred Pharmacy</label>
+        <input type="text" id="newPreferredPharmacy" name="preferredPharmacy"><br>
+        <input type="submit" value="Update Info">
+    </form>
+</div>
+<div>
+    <h3>Discharge Patient</h3>
+    <form>
+        <label for="medicalRecordNumber">Enter Patient Medical Record Number</label>
+        <input type="number" id="medicalRecordNumber" name="medicalRecordNumber">
+        <input type="submit" value="Discharge Patient">
+    </form>
+</div>
+<div>
+    <h3>New Visit</h3>
+    <form>
+        <label for="newVisitDate">Date</label>
+        <input type="date" id="newVisitDate" name="visitDate"><br>
+        <label for="chiefComplaint">Chief Complaint</label>
+        <input type="text" id="chiefComplaint" name="chiefComplaint"><br>
+        <label for="diagnosisCode">Diagnosis</label>
+        <input type="number" id="diagnosisCode" name="diagnosisCode"><br>
+        <label for="procedureCode">Procedure</label>
+        <input type="number" id="procedureCode" name="procedureCode"><br>
+        <label for="patient">Patient ID</label>
+        <input type="number" id="patient" name="patientID"><br>
+        <label for="clinic">Clinic ID</label>
+        <input type="number" id="clinic"><br>
+        <label for="provider">Provider ID</label>
+        <input type="number" id="provider"><br>
+        <label for="providerNotes">Notes</label>
+        <input type="text" id="providerNotes"><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<div>
+    <h3>Update Visit Information</h3>
+    <form>
+        <label for="visitAccountNumber">Enter Account Number</label>
+        <input type="number" id="visitAccountNumber" name="accountNumber">
+        <input type="submit" value="Submit">
+    </form><br>
+    <form>
+        <label for="updateVisitDate">Date</label>
+        <input type="date" id="updateVisitDate" name="visitDate"><br>
+        <label for="updateChiefComplaint">Chief Complaint</label>
+        <input type="text" id="updateChiefComplaint" name="chiefComplaint"><br>
+        <label for="newDiagnosisCode">Diagnosis</label>
+        <input type="number" id="newDiagnosisCode" name="diagnosisCode"><br>
+        <label for="newProcedureCode">Procedure</label>
+        <input type="number" id="newProcedureCode" name="procedureCode"><br>
+        <label for="patient">Patient ID</label>
+        <input type="number" id="patient" name="patientID"><br>
+        <label for="clinic">Clinic ID</label>
+        <input type="number" id="clinic"><br>
+        <label for="provider">Provider ID</label>
+        <input type="number" id="provider"><br>
+        <label for="providerNotes">Notes</label>
+        <input type="text" id="providerNotes"><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<div>
+    <h3>Delete Visit</h3>
+    <form>
+        <label for="deleteAccountNumber">Account Number</label>
+        <input type="number" id="deleteAccountNumber" name="accountNumber">
+        <input type="submit" value="Delete Visit">
+    </form>
+</div>
+<div>
+    <h3>View Visits by Date</h3>
+    <form>
+        <label for="byVisitDate">Enter Date</label>
+        <input type="date" id="byVisitDate" name="visitDate"><br>
+        <input type="submit" value="Submit">
+    </form>
+    <table>
+        <tr>
+            <th>Account Number</th>
+            <th>Patient</th>
+            <th>Chief Complaint</th>
+            <th>Clinic</th>
+            <th>Diagnosis</th>
+            <th>Procedure</th>
+            <th>Provider</th>
+            <th>Notes</th>
+        </tr>
+    </table>
+</div>
+<div>
+    <h3>View Patients of Provider</h3>
+    <form>
+        <label for="byProvider">Enter Provider ID</label>
+        <input type="number" id="byProvider" name="providerID"><br>
+        <input type="submit" value="Submit"
+    </form>
+    <table>
+        <tr>
+            <th>MRN</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Birth Date</th>
+            <th>PCP</th>
+            <th>Preferred Pharmacy</th>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+

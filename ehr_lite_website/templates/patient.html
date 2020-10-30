@@ -1,43 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patients Page</title>
-</head>
-<body>
-    <h1>MAX HEALTH EHR</h1>
-    <h2>Patient Portal</h2>
-    <div>
-        <h3>New Patient Information</h3>
-        <form>
-            <label for="fname">First Name</label><br>
-            <input type="text" id="fname" name="fname"><br>
-            <label for="lname">Last Name</label><br>
-            <input type="text" id="lname" name="lname"><br>
-            <label for="birthdate">Birthdate</label><br>
-            <input type="date" id="birthdate" name="birthdate"><br>
-            <label for="primaryCarePhysician">Primary Care Physician</label><br>
-            <input type="text" id="primaryCarePhysician" name="primaryCarePhysician"><br>
-            <label for="preferredPharmacy">Preferred Pharmacy</label><br>
-            <input type="text" id="preferredPharmacy" name="preferredPharmacy"><br>
-            <input type="submit" value="Submit">
-        </form>
-    </div>
-    <div>
-        <h3>Medical History</h3>
-        <table>
-            <tr>
-                <th>Account Number</th>
-                <th>Visit Date</th>
-                <th>Chief Complaint</th>
-                <th>Diagnosis</th>
-                <th>Procedure</th>
-                <th>Clinic</th>
-                <th>Provider</th>
-                <th>Notes</th>
-            </tr>
-        </table>
-    </div>
-</body>
-</html>
+{% extends "layouts/main.html" %}
+{% block body %}
+
+<h1>MAX HEALTH EHR</h1>
+<h2>Patient Portal</h2>
+<div>
+    <h3>New Patient Information</h3>
+    <form>
+        <label for="fname">First Name</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="lname">Last Name</label><br>
+        <input type="text" id="lname" name="lname"><br>
+        <label for="birthdate">Birthdate</label><br>
+        <input type="date" id="birthdate" name="birthdate"><br>
+        <label for="primaryCarePhysician">Primary Care Physician</label><br>
+        <input type="text" id="primaryCarePhysician" name="primaryCarePhysician"><br>
+        <label for="preferredPharmacy">Preferred Pharmacy</label><br>
+        <input type="text" id="preferredPharmacy" name="preferredPharmacy"><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<div id="patientTable">
+    <h3>Medical History</h3>
+    <table>
+        <tr>
+            <th>Account Number</th>
+            <th>Visit Date</th>
+            <th>Chief Complaint</th>
+            <th>Diagnosis</th>
+            <th>Procedure</th>
+            <th>Clinic</th>
+            <th>Provider</th>
+            <th>Notes</th>
+        </tr>
+    </table>
+</div>
+{% endblock %}

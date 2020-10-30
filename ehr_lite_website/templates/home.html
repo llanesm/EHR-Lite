@@ -1,5 +1,7 @@
-<h1> EHR-Lite Homepage</h1>
-    <!-- TEMP: place a form around this vvv, use Python with radio box for proper routing -->
+{% extends "layouts/main.html" %}
+{% block body %}
+<div class="container"></div>
+    <h1> EHR-Lite Homepage</h1>
     <form name="homeForm" action="" method ="POST">
         <label for="userID">User Identification #:</label>
         <input type="text" id="userID" name="uerID"><br>
@@ -14,4 +16,5 @@
         <label for="admin">Admin ID</label><br>
         <input type="submit" value="Submit">
     </form>
-    <!-- TEMP: place a form around this ^^^, use Python with radio box for proper routing -->
+</div>
+{% endblock %}
