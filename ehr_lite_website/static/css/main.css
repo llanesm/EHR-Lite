@@ -1,0 +1,77 @@
+body{
+    background-color: rgb(250, 244, 235);
+}
+h1 {
+    display: flex;
+    justify-content: center;
+    color: red;
+}
+table, th, td{
+    border: 1px solid black;
+    background-color: gainsboro;
+}
+.recordsBox{
+    margin: 3px;
+    padding: 10px;
+}
+
+#containerHome{
+    display: flex;
+    justify-content: center;
+}
+#homeForm{
+}
+
+#inputContainer{
+}
+
+#patientInput{
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid black;
+    margin: 3px;
+    padding: 5px;
+}
+
+#patientRecords{
+    display: flex;
+    justify-self: space-between;
+    border: 1px solid black;
+    margin: 3px;
+    padding: 5px;
+}
+
+#visitRecords{
+    display: flex;
+    justify-self: space-between;
+    border: 1px solid black;
+    margin: 3px;
+    padding: 5px;
+}
+
+#providersTables{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+
+#adminProviders{
+    display: flex;
+    justify-self: space-between;
+    border: 1px solid black;
+    margin: 3px;
+    padding: 5px;
+}
+
+#adminClinics{
+    display: flex;
+    justify-self: space-between;
+    border: 1px solid black;
+    margin: 3px;
+    padding: 5px;
+}
+
+#adminTables{
+    display: flex;
+    justify-content: space-evenly;
+}

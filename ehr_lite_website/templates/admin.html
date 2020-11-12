@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
-</head>
-<body>
-    <h1>MAX HEALTH EHR</h1>
-    <h2>Administration Portal</h2>
+{% extends "layouts/main.html" %}
+{% block body %}
+<h1>MAX HEALTH EHR</h1>
+<h2>Administration Portal</h2>
+<div id="adminProviders">
     <div>
         <h3>New Provider</h3>
         <form>
@@ -61,6 +56,9 @@
             <input type="submit" value="Remove Provider from System">
         </form>
     </div>
+</div>
+
+<div id="adminClinics">
     <div>
         <h3>New Clinic</h3>
         <form>
@@ -108,6 +106,9 @@
             <input type="submit" value="Remove Clinic from System"
         </form>
     </div>
+</div>
+
+<div id="adminTables">
     <div>
         <h3>View All Patients of a Clinic</h3>
         <form>
@@ -143,5 +144,6 @@
             </tr>
         </table>
     </div>
-</body>
-</html>
+</div>
+
+{% endblock %}

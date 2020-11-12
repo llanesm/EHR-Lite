@@ -1,16 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patients Page</title>
-</head>
-<body>
-    <h1>MAX HEALTH EHR</h1>
-    <h2>Patient Portal</h2>
-    <div>
+{% extends "layouts/main.html" %}
+{% block body %}
+
+<h1>MAX HEALTH EHR</h1>
+<h2>Patient Portal</h2>
+<div class="container">
+    <div id="inputContainer">
         <h3>New Patient Information</h3>
-        <form>
+        <form id="patientInput">
             <label for="fname">First Name</label><br>
             <input type="text" id="fname" name="fname"><br>
             <label for="lname">Last Name</label><br>
@@ -24,7 +20,7 @@
             <input type="submit" value="Submit">
         </form>
     </div>
-    <div>
+    <div id="patientTable">
         <h3>Medical History</h3>
         <table>
             <tr>
@@ -39,5 +35,6 @@
             </tr>
         </table>
     </div>
-</body>
-</html>
+</div>
+
+{% endblock %}

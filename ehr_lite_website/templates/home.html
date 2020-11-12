@@ -1,6 +1,8 @@
+{% extends "layouts/main.html" %}
+{% block body %}
 <h1> EHR-Lite Homepage</h1>
-    <!-- TEMP: place a form around this vvv, use Python with radio box for proper routing -->
-    <form name="homeForm" action="" method ="POST">
+<div id="containerHome">
+    <form id="homeForm" name="homeForm" action="" method ="POST">
         <label for="userID">User Identification #:</label>
         <input type="text" id="userID" name="uerID"><br>
 
@@ -14,4 +16,5 @@
         <label for="admin">Admin ID</label><br>
         <input type="submit" value="Submit">
     </form>
-    <!-- TEMP: place a form around this ^^^, use Python with radio box for proper routing -->
+</div>
+{% endblock %}
