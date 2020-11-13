@@ -122,7 +122,7 @@ VALUES ("I10", "Essential Hypertension"),
 ("L60.0", "Ingrown toenail"),
 ("S83", "Torn meniscus");
 
-INSERT INTO visits (visitDate, chiefComplaint, diagnosisCode, procedureCode, patient, provider, clinicID, providerNotes)
+INSERT INTO visits (visitDate, chiefComplaint, diagnosisCode, procedureCode, patient, provider, clinic, providerNotes)
 VALUES ("2020-03-20", "Wellness",
     (SELECT diagnosisCode FROM diagnoses WHERE diagnosisName="Essential Hypertension"),
     (SELECT procedureCode FROM procedures WHERE procedureName="General Checkup"),
