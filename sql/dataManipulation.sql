@@ -81,7 +81,7 @@ SELECT providers.providerID, providers.fname, providers.lname, providers.license
 --------------------------------------------------------------------------------
 -- Deletes --
 
---patients, Select by medicalRecordNumber
+--patients, Select by medicalRecordNumber ***NOTE: this table needs ON DELETE CASCADE <------
 --Query for deleting a patient from the system based on their unique medicalRecordNumber.
 --  Will follow ON DELETE CASCADE referential action. $medicalRecordNumber used to
 --  denote passed from backend Python representing user input from provider portal.
@@ -95,7 +95,7 @@ DELETE FROM patients WHERE medicalRecordNumber = $medicalRecordNumber;
 --  Example: $accountNumber = 1
 DELETE FROM visits WHERE accountNumber = $accountNumber;
 
---providers, Select by providerID
+--providers, Select by providerID ***NOTE: this table needs ON DELETE CASCADE <-------
 --Query for deleting a provider from the system based on their unique providerID.
 --  Will follow ON DELETE CASCADE referential action. $providerID used to
 --  denote passed from backend Python representing user input from admin portal.
