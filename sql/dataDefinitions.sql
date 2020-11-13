@@ -104,7 +104,7 @@ VALUES (99214, "General Checkup");
 INSERT INTO diagnoses (diagnosisCode, diagnosisName)
 VALUES ("I10", "Essential Hypertension");
 
-INSERT INTO visits (visitDate, chiefComplaint, diagnosisCode, procedureCode, patient, provider, clinicID, providerNotes)
+INSERT INTO visits (visitDate, chiefComplaint, diagnosisCode, procedureCode, patient, provider, clinic, providerNotes)
 VALUES ("2020-03-20", "Wellness",
     (SELECT diagnosisCode FROM diagnoses WHERE diagnosisName="Essential Hypertension"),
     (SELECT procedureCode FROM procedures WHERE procedureName="General Checkup"),
