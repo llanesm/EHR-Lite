@@ -28,17 +28,30 @@ VALUES ($date, $chiefComplaint, $diagnosisCode, $procedureCode, $patientID, $pro
 -- Selects --
 
 --patients, Select by medical record number
---Query for selecting all visits that the current patient has had based on their
---    medicalRecordNumber(PK). '$medicalRecordNumber' used to denote passed variable from backend
---    Python code representing medicalRecordNumber from patient portal
+--Query for selecting the medical history of the current patient based on their
+--    medicalRecordNumber(PK). '$medicalRecordNumber' used to denote passed variable
+--    from backend Python code representing medicalRecordNumber from patient portal
+--    Example: $medicalRecordNumber = 1
 SELECT patients.medicalRecordNumber, visits.visitDate, visits.chiefComplaint, CONCAT(providers.fname, ' ', providers.lname), visits.diagnosisCode, visits.procedureCode, clinics.clinicID, visits.providerNotes FROM visits
     JOIN patients ON patients.medicalRecordNumber = visits.patient
     JOIN clinics  ON clinics.clinicID = visits.clinic
     JOIN providers ON providers.providerID = visits.provider
     WHERE patients.medicalRecordNumber = $medicalRecordNumber;
 
---TODO:
 --visit, Select by date
+--Query for selecting all visits in the system based on the date given. $visitDate used
+--  to denote passed variable from backend Python code representing date from provider portal
+--  Example: $visitDate = '2020-03-20'
+SELECT visits.accountNumber, CONCAT(patients.fname, ' ', patients.lname), visits.chiefComplaint, clinics.clinicName, diagnoses.diagnosisName, procedures.procedureName, CONCAT(providers.fname, ' ', providers.lname), visits.providerNotes FROM visits
+    JOIN patients ON patients.medicalRecordNumber = visits.patient
+    JOIN clinics  ON clinics.clinicID = visits.clinic
+    JOIN diagnoses ON diagnoses.diagnosisCode = visits.diagnosisCode
+    JOIN procedures ON procedures.procedureCode = visits.procedureCode
+    JOIN providers ON providers.providerID = visits.provider
+    WHERE visits.visitDate = $visitDate;
+
+
+--TODO:
 --providers' paitents, Select by provider ID
 --clinics, Select by Clinic ID
 
