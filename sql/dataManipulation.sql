@@ -22,7 +22,7 @@ INSERT INTO clinics (clinicName, specialty, providerCapacity, examRooms, primary
 --Query for adding a new visit into the system. '$' used to denote variables
 --  that will be data from backend Python
 INSERT INTO visits (visitDate, chiefComplaint, diagnosisCode, procedureCode, patientID, providerID, clinicID, providerNotes)
-VALUES ($visitDate, $chiefComplaint, $diagnosisCode, $procedureCode, $patientID, $providerID, $clinicID, $providerNotes);
+    VALUES ($visitDate, $chiefComplaint, $diagnosisCode, $procedureCode, $patientID, $providerID, $clinicID, $providerNotes);
 
 --------------------------------------------------------------------------------
 -- Selects --
@@ -69,8 +69,7 @@ SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.bi
     JOIN clinics ON clinics.clinicID = visits.clinic
     WHERE clinics.clinicID = $clinicID;
 
---TODO:
---providers, Select by Clinic ID  ****************************************NOTE:Are we still Implementing this ?<---
+--providers, Select by Clinic ID
 --Query for selecting all providers of a chosen clinic based on the clinic's id number.
 --  $clinicID used to denote passed variable from backend Python code representing the
 --  clinic's unique id from admin portal
@@ -79,6 +78,7 @@ SELECT providers.providerID, providers.fname, providers.lname, providers.license
     JOIN providersClinics ON providersClinics.providerID = providers.providerID
     WHERE providersClinics.clinicID = $clinicID;
 
+--------------------------------------------------------------------------------
 -- Deletes --
 --TODO:
 --patients, Select by medical record number
@@ -86,9 +86,33 @@ SELECT providers.providerID, providers.fname, providers.lname, providers.license
 --providers, Select by Provider ID
 --clinics, Select by Clinic ID
 
+--------------------------------------------------------------------------------
 -- Updates --
---TODO:
+
 --patients, Select by patient ID
+--Query for updating a patient's information based on their unique medicalRecordNumber.
+--  '$' used to denote variables that are passed from backend Python representing user
+--  input in the relavent fields.
+UPDATE patients SET fname = $fname, lname = $lname, birthdate = $birthdate, primaryCarePhysician = $primaryCarePhysician, preferredPharmacy = $preferredPharmacy
+    WHERE medicalRecordNumber = $medicalRecordNumber;
+
 --visit, Select by account number
---providers, Select by provider ID
---clinics, Select by Clinic ID
+--Query for updating a visit's information based on their unique accountNumber.
+--  '$' used to denote variables that are passed from backend Python representing user
+--  input in the relavent fields.
+UPDATE visits SET visitDate = $visitDate, chiefComplaint = $chiefComplaint, diagnosisCode = $diagnosisCode, procedureCode = $procedureCode, patient = $patientID, clinic = $clinicID, provider = $providerID, providerNotes = $providerNotes
+    WHERE accountNumber = $accountNumber;
+
+--providers, Select by provider ID *****NOTE: Add fname to this query and html form? <-----
+--Query for updating a provider's information based on their unique providerID.
+--  '$' used to denote variables that are passed from backend Python representing user
+--  input in the relavent fields.
+UPDATE providers SET lname = $fname, licenseType = $licenseType, licenseNumber = $licenseNumber, specialty = $specialty, primaryCare = $primaryCare
+    WHERE providerID = $providerID;
+
+--clinics, Select by Clinic ID *****NOTE: Add clinicName to this query and html form? <-----
+--Query for updating a clinics's information based on their unique clinicID.
+--  '$' used to denote variables that are passed from backend Python representing user
+--  input in the relavent fields.
+UPDATE clinics SET specialty = $specialty, providerCapacity = $providerCapacity, examRooms = $examRooms, primaryCare = $primaryCare
+    WHERE clinicID = $clinicID;
