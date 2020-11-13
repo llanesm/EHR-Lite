@@ -60,13 +60,21 @@ SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.bi
     WHERE providers.providerID = $providerID;
 
 --clinics, Select by clinicID
---Query for selecting all patients of a chosen clinic based on the clinic's id number.
+--Query1 (using Visits) for selecting all patients of a chosen clinic based on the clinic's id number.
 --  $clinicID used to denote passed variable from backend Python code representing the
 --  clinic's unique id from admin portal
 --  Example: $clinicID = 1
 SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.birthdate FROM patients
     JOIN visits ON visits.patient = patients.medicalRecordNumber
     JOIN clinics ON clinics.clinicID = visits.clinic
+    WHERE clinics.clinicID = $clinicID;
+--Query2 (Using patientsClinics) for selecting all patients of a chosen clinic based on the clinic's id number.
+--  $clinicID used to denote passed variable from backend Python code representing the
+--  clinic's unique id from admin portal
+--  Example: $clinicID = 1
+SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.birthdate FROM patients
+    JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber
+    JOIN clinics ON clinics.clinicID = patientsClinics.clinicID
     WHERE clinics.clinicID = $clinicID;
 
 --providers, Select by Clinic ID
