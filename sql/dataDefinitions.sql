@@ -201,7 +201,7 @@ VALUES
     (SELECT clinicID FROM clinics WHERE clinicName="Max Health Plaza")),
 ((SELECT medicalRecordNumber FROM patients WHERE fname="Bob" AND lname="Burgers" AND birthdate="1956-12-10"),
     (SELECT clinicID FROM clinics WHERE clinicName="Max Health Plaza")),
-((SELECT medicalRecordNumber FROM patients WHERE fname="Rick" AND lname="Sanchez" AND birthdate="1950-01-01")
+((SELECT medicalRecordNumber FROM patients WHERE fname="Rick" AND lname="Sanchez" AND birthdate="1950-01-01"),
     (SELECT clinicID FROM clinics WHERE clinicName="Max Health Plaza")),
 ((SELECT medicalRecordNumber FROM patients WHERE fname="Rick" AND lname="Sanchez" AND birthdate="1950-01-01"),
     (SELECT clinicID FROM clinics WHERE clinicName="Max Orthopedics"));
