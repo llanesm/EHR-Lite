@@ -41,17 +41,164 @@ def home():
 
     return render_template('home.html')
 
+
+
 @webapp.route('/patient')
 def patient():
     return render_template('patient.html')
 
 
-@webapp.route('/providers')
+
+"""
+Webapp route for handling frontend <--> backend logic of the providers page
+"""
+@webapp.route('/providers', methods=['GET', 'POST'])
 def providers():
     #setup for connecting to our database
     db_connection = connect_to_database()
 
+    #Handler for parsing requests made from submission of one of the forms
+    if request.method =='POST':
+        print(request.form)
+
+        #Accessing Patient Information in Providers Portal
+        #New Patient = providerNewPatient
+        if 'providerNewPatient' in request.form:
+            print("ADDING PATIENT INFO")
+            print("patient_fname:", request.form['newPatientFirstName'])
+            patient_fname = request.form['newPatientFirstName']
+            print("patient_lname:", request.form['newPatientLastName'])
+            patient_lname = request.form['newPatientBirthdate']
+            print("patient_birthdate:", request.form['newPatientBirthdate'])
+            patient_birthdate = request.form['newPatientBirthdate']
+            print("patient_pcp:", request.form['primaryCarePhysician'])
+            patient_pcp = request.form['primaryCarePhysician']
+            print("patient_pharamcy:", request.form['patientPreferredPharmacy'])
+            patient_pharamcy = request.form['patientPreferredPharmacy']
+
+            #TODO: insert into patients SQL statement in DB
+
+        #Discharge Patient = providerDischargePatient
+        elif 'providerDischargePatient' in request.form:
+            print("DELETEING PATIENT INFO")
+            print("patient_mrn: ", request.form['medicalRecordNumber'])
+            patient_mrn = request.form['medicalRecordNumber']
+
+            #TODO: delete from patients SQL statement in DB
+
+        #Enter ID of Patient to update = providerLookupPatient
+        elif 'providerLookupPatient' in request.form:
+            print("LOOKUP PATIENT INFO")
+            print("patient_mrn: ", request.form['patientID'])
+            patient_mrn = request.form['patientID']
+
+            #TODO: SELECT from patients SQL, populate forms with retuned info
+        #Update Patient Information = providerUpdatePatient
+        elif 'providerUpdatePatient' in request.form:
+            print("UPDATING PATIENT INFO")
+
+            print("patient_fname:", request.form['fname'])
+            patient_fname = request.form['fname']
+            print("patient_lname:", request.form['lname'])
+            patient_lname = request.form['lname']
+            print("patient_birthdate:", request.form['birthdate'])
+            patient_birthdate = request.form['birthdate']
+            print("patient_pcp_num:", request.form['primaryCarePhysicianNum'])
+            patient_pcp_num = request.form['primaryCarePhysicianNum']
+            print("patient_pharamcy:", request.form['preferredPharmacy'])
+            patient_pharamcy = request.form['preferredPharmacy']
+
+            #TODO: UPDATE patients SQL, update patient in DB
+
+        # Access Visit Information in Providers Portal
+        #New Visit = providersNewVisit
+        elif 'providersNewVisit' in request.form:
+            print("ADDING NEW VISIT")
+
+            print("visit_date:", request.form['visitDate'])
+            visit_date = request.form['visitDate']
+            print("chief_complaint:", request.form['chiefComplaint'])
+            chief_complaint = request.form['chiefComplaint']
+            print("diagnosis_code:", request.form['diagnosisCode'])
+            diagnosis_code = request.form['diagnosisCode']
+            print("procedure_code:", request.form['procedureCode'])
+            procedure_code = request.form['procedureCode']
+            print("patient_mrn:", request.form['patientID'])
+            patient_mrn = request.form['patientID']
+            print("clinic_id:", request.form['clinicID'])
+            clinic_id = request.form['clinicID']
+            print("provider_id:", request.form['providerID'])
+            provider_id = request.form['providerID']
+            print("notes_string:", request.form['providerNotes'])
+            notes_string = request.form['providerNotes']
+
+            #TODO: INSERT into visits SQL
+
+        #Enter ID of Visit to update "Enter Account Number" = providersVisitLookup
+        elif 'providersVisitLookup' in request.form:
+            print("LOOKING UP VISIT")
+            print("visit_id: ", request.form['accountNumber'])
+            visit_id = request.form['accountNumber']
+
+            #TODO: SELECT visits SQL, insert into form fields bellow
+
+        #Update Visit Information = providersUpdateVisit
+        elif 'providersUpdateVisit' in request.form:
+            print("UPDATING NEW VISIT")
+
+            print("visit_date:", request.form['visitDate'])
+            visit_date = request.form['visitDate']
+            print("chief_complaint:", request.form['chiefComplaint'])
+            chief_complaint = request.form['chiefComplaint']
+            print("diagnosis_code:", request.form['diagnosisCode'])
+            diagnosis_code = request.form['diagnosisCode']
+            print("procedure_code:", request.form['procedureCode'])
+            procedure_code = request.form['procedureCode']
+            print("patient_mrn:", request.form['patientID'])
+            patient_mrn = request.form['patientID']
+            print("clinic_id:", request.form['clinicID'])
+            clinic_id = request.form['clinicID']
+            print("provider_id:", request.form['providerID'])
+            provider_id = request.form['providerID']
+            print("notes_string:", request.form['providerNotes'])
+            notes_string = request.form['providerNotes']
+
+            #TODO: UPDATE visits SQL
+
+        #Delete Visit = providersDeleteVisit
+        elif 'providersDeleteVisit' in request.form:
+            print("DELETING VISIT")
+
+            print("visit_id: ", request.form['accountNumber'])
+            visit_id = request.form['accountNumber']
+
+            #TODO: DELETE visits SQL
+
+        #View Visists by Date = viewVisits
+        elif 'viewVisits' in request.form:
+            print("VIEWING VISITS")
+
+            print("visit_date: ", request.form['visitDate'])
+            visit_date = request.form['visitDate']
+
+            #TODO: SELECT visits SQL
+
+        #View Patients of Provider = viewProviderPatients
+        elif 'viewProviderPatients' in request.form:
+            print("VIEWING PATIENTS")
+
+            print("provider_id: ", request.form['providerID'])
+            provider_id = request.form['providerID']
+
+            #TODO: SELECT patients SQL
+
+
+        #reload the same providers page after POST
+        return redirect(url_for('providers'))
     return render_template('providers.html')
+
+
+
 
 @webapp.route('/admin')
 def admin():
