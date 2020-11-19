@@ -131,6 +131,18 @@
                 <th>Provider</th>
                 <th>Notes</th>
             </tr>
+            {%for row in visitData%}
+                <tr>
+                    <td>{{ row['accountNumber'] }}</td>
+                    <td>{{ row['patient'] }}</td>
+                    <td>{{ row['chiefComplaint'] }}</td>
+                    <td>{{ row['clinicName'] }}</td>
+                    <td>{{ row['diagnosisName'] }}</td>
+                    <td>{{ row['procedureName'] }}</td>
+                    <td>{{ row['PCP'] }}</td>
+                    <td>{{ row['providerNotes'] }}</td>
+                </tr>
+            {% endfor %}
         </table>
     </div>
     <div id="providersViewPatients">
