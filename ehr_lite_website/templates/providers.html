@@ -161,6 +161,16 @@
                 <th>PCP</th>
                 <th>Preferred Pharmacy</th>
             </tr>
+            {%for row in patientData%}
+                <tr>
+                    <td>{{ row['medicalRecordNumber'] }}</td>
+                    <td>{{ row['fname'] }}</td>
+                    <td>{{ row['lname'] }}</td>
+                    <td>{{ row['birthdate'] }}</td>
+                    <td>{{ row['PCP'] }}</td>
+                    <td>{{ row['preferredPharmacy'] }}</td>
+                </tr>
+            {% endfor %}
         </table>
     </div>
 </div>

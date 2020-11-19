@@ -60,7 +60,8 @@ def providers():
     #Handler for parsing requests made from submission of one of the forms
     if request.method =='POST':
         print(request.form)
-
+        patientData = {}
+        visitData = {}
         #Accessing Patient Information in Providers Portal
         #New Patient = providerNewPatient
         if 'providerNewPatient' in request.form:
@@ -177,11 +178,8 @@ def providers():
         #View Visists by Date = viewVisits
         elif 'viewVisits' in request.form:
             print("VIEWING VISITS")
-
-            print("visit_date: ", request.form['visitDate'])
             visit_date = request.form['visitDate']
 
-            #TODO: SELECT visits SQL
             query = """SELECT visits.accountNumber, CONCAT(patients.fname, ' ', patients.lname) AS patient, visits.chiefComplaint, clinics.clinicName, diagnoses.diagnosisName, procedures.procedureName, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', visits.providerNotes FROM visits
                         JOIN patients ON patients.medicalRecordNumber = visits.patient
                         JOIN clinics  ON clinics.clinicID = visits.clinic
@@ -196,23 +194,26 @@ def providers():
             json_data = []
             for row_string in row_variables:
                 json_data.append(dict(zip(row_headers, row_string)))
-            print("json_data: ", json_data)
 
-
-            print('test: ', json_data[0]['accountNumber'])
             return render_template('providers.html', visitData=json_data)
 
         #View Patients of Provider = viewProviderPatients
         elif 'viewProviderPatients' in request.form:
             print("VIEWING PATIENTS")
 
-            print("provider_id: ", request.form['providerID'])
             provider_id = request.form['providerID']
 
-            #TODO: SELECT patients SQL
-            # SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.birthdate, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', patients.preferredPharmacy FROM patients
-            #     JOIN providers ON providers.providerID = patients.primaryCarePhysician
-            #     WHERE providers.providerID = $providerID;
+            query = """SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.birthdate, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', patients.preferredPharmacy FROM patients
+                            JOIN providers ON providers.providerID = patients.primaryCarePhysician
+                             WHERE providers.providerID = {};""".format(provider_id)
+            result = execute_query(db_connection, query)
+
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall() #be careful, this pop's the data as well
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+            return render_template('providers.html', patientData=json_data)
 
         #reload the same providers page after POST
         return redirect(url_for('providers'))
