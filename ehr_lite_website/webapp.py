@@ -1,9 +1,10 @@
 from flask import Flask, render_template
 from flask import request, redirect, url_for
+from flask import session
 from db_connector.db_connector import connect_to_database, execute_query
 
 import sys
-
+cache= {}
 #create the web application
 webapp = Flask(__name__)
 
@@ -17,6 +18,8 @@ def hello():
 
 @webapp.route('/', methods=['GET', 'POST'])
 def home():
+    session['visitData'] = 0
+    session['patientData'] = 0
     if request.method =='POST':
         print("REQUEST.FORM: ", request.form)
 
@@ -52,16 +55,24 @@ def patient():
 """
 Webapp route for handling frontend <--> backend logic of the providers page
 """
+
 @webapp.route('/providers', methods=['GET', 'POST'])
 def providers():
     #setup for connecting to our database
     db_connection = connect_to_database()
+    if session['visitData']:
+        visitData = session['visitData']
+    else:
+        visitData = {}
+    if session['patientData']:
+        patientData = session['patientData']
+    else:
+        patientData = {}
 
     #Handler for parsing requests made from submission of one of the forms
     if request.method =='POST':
         print(request.form)
-        patientData = {}
-        visitData = {}
+
         #Accessing Patient Information in Providers Portal
         #New Patient = providerNewPatient
         if 'providerNewPatient' in request.form:
@@ -142,38 +153,39 @@ def providers():
             visit_id = request.form['accountNumber']
 
             #TODO: SELECT visits SQL, insert into form fields bellow
+            query = """SELECT visits.accountNumber, CONCAT(patients.fname, ' ', patients.lname), visits.chiefComplaint, clinics.clinicName, diagnoses.diagnosisName, procedures.procedureName, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', visits.providerNotes FROM visits
+                        JOIN patients ON patients.medicalRecordNumber = visits.patient
+                        JOIN clinics  ON clinics.clinicID = visits.clinic
+                        JOIN diagnoses ON diagnoses.diagnosisCode = visits.diagnosisCode
+                        JOIN procedures ON procedures.procedureCode = visits.procedureCode
+                        JOIN providers ON providers.providerID = visits.provider
+                        WHERE visits.visitDate = $visitDate;""".format()
+
 
         #Update Visit Information = providersUpdateVisit
         elif 'providersUpdateVisit' in request.form:
             print("UPDATING NEW VISIT")
-
-            print("visit_date:", request.form['visitDate'])
+            account_number = 1                              #TODO, get account number that was passed from previous call
             visit_date = request.form['visitDate']
-            print("chief_complaint:", request.form['chiefComplaint'])
             chief_complaint = request.form['chiefComplaint']
-            print("diagnosis_code:", request.form['diagnosisCode'])
             diagnosis_code = request.form['diagnosisCode']
-            print("procedure_code:", request.form['procedureCode'])
             procedure_code = request.form['procedureCode']
-            print("patient_mrn:", request.form['patientID'])
             patient_mrn = request.form['patientID']
-            print("clinic_id:", request.form['clinicID'])
             clinic_id = request.form['clinicID']
-            print("provider_id:", request.form['providerID'])
             provider_id = request.form['providerID']
-            print("notes_string:", request.form['providerNotes'])
             notes_string = request.form['providerNotes']
 
             #TODO: UPDATE visits SQL
+            query = """UPDATE visits SET visitDate = {}, chiefComplaint = {}, diagnosisCode = {}, procedureCode = {}, patient = {}, clinic = {}, provider = {}, providerNotes = {}
+                        WHERE accountNumber = {};""".format(visit_date, chief_complaint, diagnosis_code, procedure_code, patient_mrn, clinic_id, provider_id, notes_string, account_number)
 
         #Delete Visit = providersDeleteVisit
         elif 'providersDeleteVisit' in request.form:
             print("DELETING VISIT")
-
-            print("visit_id: ", request.form['accountNumber'])
             visit_id = request.form['accountNumber']
 
-            #TODO: DELETE visits SQL
+            query = """DELETE FROM visits WHERE accountNumber = {};""".format(visit_id)
+            result = execute_query(db_connection, query)
 
         #View Visists by Date = viewVisits
         elif 'viewVisits' in request.form:
@@ -194,8 +206,9 @@ def providers():
             json_data = []
             for row_string in row_variables:
                 json_data.append(dict(zip(row_headers, row_string)))
-
-            return render_template('providers.html', visitData=json_data)
+            visitData = json_data
+            session['visitData'] = visitData
+            #return render_template('providers.html', visitData=visitData)
 
         #View Patients of Provider = viewProviderPatients
         elif 'viewProviderPatients' in request.form:
@@ -205,7 +218,7 @@ def providers():
 
             query = """SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.birthdate, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', patients.preferredPharmacy FROM patients
                             JOIN providers ON providers.providerID = patients.primaryCarePhysician
-                             WHERE providers.providerID = {};""".format(provider_id)
+                            WHERE providers.providerID = {};""".format(provider_id)
             result = execute_query(db_connection, query)
 
             row_headers = [x[0] for x in result.description]
@@ -213,10 +226,15 @@ def providers():
             json_data = []
             for row_string in row_variables:
                 json_data.append(dict(zip(row_headers, row_string)))
-            return render_template('providers.html', patientData=json_data)
+            patientData = json_data
+            session['patientData'] = patientData
+            #return render_template('providers.html', patientData=patientData)
 
+        print("patientData", patientData)
+        print("visitData", visitData)
+        return render_template('providers.html', patientData=patientData, visitData = visitData)
         #reload the same providers page after POST
-        return redirect(url_for('providers'))
+        #return redirect(url_for('providers'))
     return render_template('providers.html')
 
 
@@ -228,3 +246,5 @@ def admin():
     db_connection = connect_to_database()
 
     return render_template('admin.html')
+
+webapp.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
