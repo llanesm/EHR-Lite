@@ -82,15 +82,16 @@
             <input type="number" id="visitAccountNumber" name="accountNumber">
             <input type="submit" name="providersVisitLookup" value="1.) Lookup">
         </form><br>
+        {% if providerUpdateVisitObj %}
         <form method="POST">
             <label for="updateVisitDate">Date</label>
             <input type="date" id="updateVisitDate" name="visitDate"><br>
             <label for="updateChiefComplaint">Chief Complaint</label>
             <input type="text" id="updateChiefComplaint" name="chiefComplaint"><br>
             <label for="newDiagnosisCode">Diagnosis</label>
-            <input type="number" id="newDiagnosisCode" name="diagnosisCode"><br>
+            <input type="text" id="newDiagnosisCode" name="diagnosisCode"><br>
             <label for="newProcedureCode">Procedure</label>
-            <input type="number" id="newProcedureCode" name="procedureCode"><br>
+            <input type="text" id="newProcedureCode" name="procedureCode"><br>
             <label for="patient">Patient ID</label>
             <input type="number" id="patient" name="patientID"><br>
             <label for="clinic">Clinic ID</label>
@@ -98,9 +99,10 @@
             <label for="provider">Provider ID</label>
             <input type="number" id="provider" name="providerID"><br>
             <label for="providerNotes">Notes</label>
-            <input type="text" id="providerNotes" name="providerNotes"><br>
+            <input type="text" id="providerNotes" name="providerNotes" value="{{ providerUpdateVisitObj[0]['providerNotes'] }}"><br>
             <input type="submit" name="providersUpdateVisit" value="2.) Update Info">
         </form>
+        {% endif %}
     </div>
     <div class="recordsBox">
         <h3>Delete Visit</h3>
@@ -118,7 +120,7 @@
         <form method="POST">
             <label for="byVisitDate">Enter Date</label>
             <input type="date" id="byVisitDate" name="visitDate"><br>
-            <input type="submit" name="viewVisits" value="Submit">
+            <input type="submit" name="providersViewVisits" value="Submit">
         </form>
         <table>
             <tr>

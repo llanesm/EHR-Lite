@@ -18,8 +18,11 @@ def hello():
 
 @webapp.route('/', methods=['GET', 'POST'])
 def home():
+    #establish sessions to prevent keyErrors
     session['visitData'] = 0
     session['patientData'] = 0
+    session['providerUpdateVisitID'] = 0
+    session['providerUpdateVisitObj'] = 0
     if request.method =='POST':
         print("REQUEST.FORM: ", request.form)
 
@@ -60,6 +63,19 @@ Webapp route for handling frontend <--> backend logic of the providers page
 def providers():
     #setup for connecting to our database
     db_connection = connect_to_database()
+    try:
+        session['visitData']
+        session['patientData']
+        session['providerUpdateVisitID']
+        session['providerUpdateVisitObj']
+    except KeyError as error:
+        session['visitData'] = 0
+        session['patientData'] = 0
+        session['providerUpdateVisitID'] = 0
+        session['providerUpdateVisitObj'] = 0
+        print("caught keyerror", error)
+
+
     if session['visitData']:
         visitData = session['visitData']
     else:
@@ -68,7 +84,22 @@ def providers():
         patientData = session['patientData']
     else:
         patientData = {}
-
+    if session['providerUpdateVisitID'] :
+        providerUpdateVisitID = session['providerUpdateVisitID']
+    else:
+        providerUpdateVisitID = -1
+    if session['providerUpdateVisitObj']:
+        providerUpdateVisitObj = session['providerUpdateVisitObj']
+    else:
+        providerUpdateVisitObj = [{'visitDate' : '',
+                                  'chiefComplaint' : '',
+                                  'diagnosisCode' : '',
+                                  'procedureCode' : '',
+                                  'patientID' : '',
+                                  'clinicID' : '',
+                                  'providerID' : '',
+                                  'providerNotes' : '',
+                                 }]
     #Handler for parsing requests made from submission of one of the forms
     if request.method =='POST':
         print(request.form)
@@ -148,24 +179,28 @@ def providers():
 
         #Enter ID of Visit to update "Enter Account Number" = providersVisitLookup
         elif 'providersVisitLookup' in request.form:
-            print("LOOKING UP VISIT")
+            print("LOOKING UP VISIT BEFORE UPDATE")
             print("visit_id: ", request.form['accountNumber'])
             visit_id = request.form['accountNumber']
 
             #TODO: SELECT visits SQL, insert into form fields bellow
-            query = """SELECT visits.accountNumber, CONCAT(patients.fname, ' ', patients.lname), visits.chiefComplaint, clinics.clinicName, diagnoses.diagnosisName, procedures.procedureName, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', visits.providerNotes FROM visits
-                        JOIN patients ON patients.medicalRecordNumber = visits.patient
-                        JOIN clinics  ON clinics.clinicID = visits.clinic
-                        JOIN diagnoses ON diagnoses.diagnosisCode = visits.diagnosisCode
-                        JOIN procedures ON procedures.procedureCode = visits.procedureCode
-                        JOIN providers ON providers.providerID = visits.provider
-                        WHERE visits.visitDate = $visitDate;""".format()
+            query = """SELECT visits.visitDate, visits.chiefComplaint, visits.diagnosisCode, visits.procedureCode, visits.patient, visits.clinic, visits.provider, visits.providerNotes  FROM visits
+                        WHERE visits.accountNumber = {};""".format(visit_id)
+            result = execute_query(db_connection, query)
 
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall() #be careful, this pop's the data as well
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+
+            providerUpdateVisitObj = json_data
+            session['providerUpdateVisitObj'] = providerUpdateVisitObj
 
         #Update Visit Information = providersUpdateVisit
         elif 'providersUpdateVisit' in request.form:
             print("UPDATING NEW VISIT")
-            account_number = 1                              #TODO, get account number that was passed from previous call
+            account_number = session['providerUpdateVisitID']   #TODO, get account number that was passed from previous call
             visit_date = request.form['visitDate']
             chief_complaint = request.form['chiefComplaint']
             diagnosis_code = request.form['diagnosisCode']
@@ -178,6 +213,8 @@ def providers():
             #TODO: UPDATE visits SQL
             query = """UPDATE visits SET visitDate = {}, chiefComplaint = {}, diagnosisCode = {}, procedureCode = {}, patient = {}, clinic = {}, provider = {}, providerNotes = {}
                         WHERE accountNumber = {};""".format(visit_date, chief_complaint, diagnosis_code, procedure_code, patient_mrn, clinic_id, provider_id, notes_string, account_number)
+            result = execute_query(db_connection, query)
+
 
         #Delete Visit = providersDeleteVisit
         elif 'providersDeleteVisit' in request.form:
@@ -188,7 +225,7 @@ def providers():
             result = execute_query(db_connection, query)
 
         #View Visists by Date = viewVisits
-        elif 'viewVisits' in request.form:
+        elif 'providersViewVisits' in request.form:
             print("VIEWING VISITS")
             visit_date = request.form['visitDate']
 
@@ -230,9 +267,8 @@ def providers():
             session['patientData'] = patientData
             #return render_template('providers.html', patientData=patientData)
 
-        print("patientData", patientData)
-        print("visitData", visitData)
-        return render_template('providers.html', patientData=patientData, visitData = visitData)
+        print("providerUpdateVisitObj: ", providerUpdateVisitObj)
+        return render_template('providers.html', patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj)
         #reload the same providers page after POST
         #return redirect(url_for('providers'))
     return render_template('providers.html')
