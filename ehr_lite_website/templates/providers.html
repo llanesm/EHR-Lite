@@ -91,16 +91,29 @@
             <label for="updateChiefComplaint">Chief Complaint</label>
             <input type="text" id="updateChiefComplaint" name="chiefComplaint" value="{{ providerUpdateVisitObj[0]['chiefComplaint'] }}"><br>
             <label for="newDiagnosisCode">Diagnosis</label>
-            <!-- <input type="text" id="newDiagnosisCode" name="diagnosisCode" value="{{ providerUpdateVisitObj[0]['diagnosisCode'] }}"><br> -->
             {% if diagnosisOptions %}
             <select id="diagnosisOptions" name="diagnosisCode">
                 {% for option in diagnosisOptions %}
-                    <option value="{{ option }}">{{ option }}</option>
+                    {% if option == providerUpdateVisitObj[0]['diagnosisCode'] %}
+                        <option value="{{ option }}" selected>{{ option }}</option>
+                    {% else %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
             {% endif %}
             <label for="newProcedureCode">Procedure</label>
-            <input type="text" id="newProcedureCode" name="procedureCode" value="{{ providerUpdateVisitObj[0]['procedureCode'] }}"><br>
+            {% if procedureOptions %}
+            <select id="newProcedureCode" name="procedureCode" value=>
+                {% for option in procedureOptions %}
+                    {% if option == providerUpdateVisitObj[0]['procedureCode'] %}
+                        <option value="{{ option }}" selected>{{ option }}</option>
+                    {% else %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% endif %}
             <label for="patient">Patient ID</label>
             <input type="number" id="patient" name="patientID" value="{{ providerUpdateVisitObj[0]['patient'] }}"><br>
             <label for="clinic">Clinic ID</label>
