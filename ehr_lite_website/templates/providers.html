@@ -91,7 +91,14 @@
             <label for="updateChiefComplaint">Chief Complaint</label>
             <input type="text" id="updateChiefComplaint" name="chiefComplaint" value="{{ providerUpdateVisitObj[0]['chiefComplaint'] }}"><br>
             <label for="newDiagnosisCode">Diagnosis</label>
-            <input type="text" id="newDiagnosisCode" name="diagnosisCode" value="{{ providerUpdateVisitObj[0]['diagnosisCode'] }}"><br>
+            <!-- <input type="text" id="newDiagnosisCode" name="diagnosisCode" value="{{ providerUpdateVisitObj[0]['diagnosisCode'] }}"><br> -->
+            {% if diagnosisOptions %}
+            <select id="diagnosisOptions" name="diagnosisCode">
+                {% for option in diagnosisOptions %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
             <label for="newProcedureCode">Procedure</label>
             <input type="text" id="newProcedureCode" name="procedureCode" value="{{ providerUpdateVisitObj[0]['procedureCode'] }}"><br>
             <label for="patient">Patient ID</label>

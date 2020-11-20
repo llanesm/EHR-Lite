@@ -23,6 +23,9 @@ def home():
     session['patientData'] = 0
     session['providerUpdateVisitID'] = 0
     session['providerUpdateVisitObj'] = 0
+    session['patient_mrn'] = 0
+    session['providerPatientObj'] = 0
+
     if request.method =='POST':
         print("REQUEST.FORM: ", request.form)
 
@@ -33,13 +36,11 @@ def home():
             return redirect(url_for('providers')) #pass id number here for redirect
 
         #if routing to patient
-        #TODO: 2 patient pages, those who have an existing id (are in the db) and those who need to create a new patient
         elif request.form['userType'] =="patient":
             print("PRINT: userTYPE: ")
             print(request.form['userType'], file=sys.stdout)
             return redirect(url_for('patient')) #pass id number here for redirect
-
-        #TODO: ADD HTML PAGE
+        #if routing to admin
         elif request.form['userType'] =="admin":
             print("PRINT: userTYPE: ")
             print(request.form['userType'], file=sys.stdout)
@@ -58,11 +59,12 @@ def patient():
 """
 Webapp route for handling frontend <--> backend logic of the providers page
 """
-
 @webapp.route('/providers', methods=['GET', 'POST'])
 def providers():
     #setup for connecting to our database
     db_connection = connect_to_database()
+
+
     try:
         session['visitData']
         session['patientData']
@@ -70,6 +72,7 @@ def providers():
         session['providerUpdateVisitObj']
         session['patient_mrn']
         session['providerPatientObj']
+        session['diagnosisOptions']
     except KeyError as error:
         session['patient_mrn'] = 0
         session['providerPatientObj'] = 0
@@ -77,7 +80,19 @@ def providers():
         session['patientData'] = 0
         session['providerUpdateVisitID'] = 0
         session['providerUpdateVisitObj'] = 0
+        session['diagnosisOptions'] = 0
         print("caught keyerror", error)
+
+    if session['diagnosisOptions']:
+        diagnosisOptions = session['diagnosisOptions']
+    else:
+        query = "SELECT diagnosisCode FROM diagnoses"
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall()
+        diagnosisOptions = []
+        for row_string in row_variables:
+            diagnosisOptions.append(row_string[0])
 
     if session['patient_mrn']:
         patient_mrn = session['patient_mrn']
@@ -108,26 +123,25 @@ def providers():
         providerUpdateVisitObj = session['providerUpdateVisitObj']
     else:
         providerUpdateVisitObj = {}
+
+
     #Handler for parsing requests made from submission of one of the forms
     if request.method =='POST':
-        print(request.form)
-
         #Accessing Patient Information in Providers Portal
         #New Patient = providerNewPatient
         if 'providerNewPatient' in request.form:
             print("ADDING PATIENT INFO")
-            print("patient_fname:", request.form['newPatientFirstName'])
+
             patient_fname = request.form['newPatientFirstName']
-            print("patient_lname:", request.form['newPatientLastName'])
-            patient_lname = request.form['newPatientBirthdate']
-            print("patient_birthdate:", request.form['newPatientBirthdate'])
+            patient_lname = request.form['newPatientLastName']
             patient_birthdate = request.form['newPatientBirthdate']
-            print("patient_pcp:", request.form['primaryCarePhysician'])
             patient_pcp = request.form['primaryCarePhysician']
-            print("patient_pharamcy:", request.form['patientPreferredPharmacy'])
             patient_pharamcy = request.form['patientPreferredPharmacy']
 
-            #TODO: insert into patients SQL statement in DB
+            query = """INSERT INTO patients (fname, lname, birthdate, preferredPharmacy, primaryCarePhysician)
+                            VALUES ('{}', '{}', '{}', '{}', {});""".format(patient_fname, patient_lname, patient_birthdate, patient_pharamcy,  patient_pcp)
+
+            execute_query(db_connection, query)
 
         #Discharge Patient = providerDischargePatient
         elif 'providerDischargePatient' in request.form:
@@ -135,7 +149,6 @@ def providers():
             print("patient_mrn: ", request.form['medicalRecordNumber'])
             patient_mrn = request.form['medicalRecordNumber']
 
-            #TODO: delete from patients SQL statement in DB
             query = """DELETE FROM patients WHERE medicalRecordNumber = {};""".format(patient_mrn)
 
             execute_query(db_connection, query)
@@ -227,6 +240,7 @@ def providers():
         elif 'providersUpdateVisit' in request.form:
             print("UPDATING NEW VISIT")
             account_number = session['providerUpdateVisitID']
+            sqlData = []
             visit_date = request.form['visitDate']
             chief_complaint = request.form['chiefComplaint']
             diagnosis_code = request.form['diagnosisCode']
@@ -257,10 +271,11 @@ def providers():
             print("VIEWING VISITS")
             visit_date = request.form['visitDate']
 
+            #modified this SQL from dataManipulation.sql
             query = """SELECT visits.accountNumber, CONCAT(patients.fname, ' ', patients.lname) AS patient, visits.chiefComplaint, clinics.clinicName, diagnoses.diagnosisName, procedures.procedureName, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', visits.providerNotes FROM visits
                         JOIN patients ON patients.medicalRecordNumber = visits.patient
                         JOIN clinics  ON clinics.clinicID = visits.clinic
-                        JOIN diagnoses ON diagnoses.diagnosisCode = visits.diagnosisCode
+                        LEFT JOIN diagnoses ON diagnoses.diagnosisCode = visits.diagnosisCode
                         JOIN procedures ON procedures.procedureCode = visits.procedureCode
                         JOIN providers ON providers.providerID = visits.provider
                         WHERE visits.visitDate = '{}';""".format(visit_date)
@@ -273,7 +288,6 @@ def providers():
                 json_data.append(dict(zip(row_headers, row_string)))
             visitData = json_data
             session['visitData'] = visitData
-            #return render_template('providers.html', visitData=visitData)
 
         #View Patients of Provider = viewProviderPatients
         elif 'viewProviderPatients' in request.form:
@@ -295,7 +309,7 @@ def providers():
             session['patientData'] = patientData
             #return render_template('providers.html', patientData=patientData)
 
-        return render_template('providers.html', patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
+        return render_template('providers.html', diagnosisOptions=diagnosisOptions, patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
 
     return render_template('providers.html')
 
