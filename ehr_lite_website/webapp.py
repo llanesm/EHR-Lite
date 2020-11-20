@@ -25,6 +25,8 @@ def home():
     session['providerUpdateVisitObj'] = 0
     session['patient_mrn'] = 0
     session['providerPatientObj'] = 0
+    session['diagnosisOptions'] = 0
+    session['procedureOptions'] = 0
 
     if request.method =='POST':
         print("REQUEST.FORM: ", request.form)
@@ -73,6 +75,7 @@ def providers():
         session['patient_mrn']
         session['providerPatientObj']
         session['diagnosisOptions']
+        session['procedureOptions']
     except KeyError as error:
         session['patient_mrn'] = 0
         session['providerPatientObj'] = 0
@@ -81,7 +84,19 @@ def providers():
         session['providerUpdateVisitID'] = 0
         session['providerUpdateVisitObj'] = 0
         session['diagnosisOptions'] = 0
+        session['procedureOptions'] = 0
         print("caught keyerror", error)
+
+    if session['procedureOptions']:
+        procedureOptions = session['procedureOptions']
+    else:
+        query = "SELECT procedureCode FROM procedures"
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall()
+        procedureOptions = []
+        for row_string in row_variables:
+            procedureOptions.append(row_string[0])
 
     if session['diagnosisOptions']:
         diagnosisOptions = session['diagnosisOptions']
@@ -240,7 +255,7 @@ def providers():
         elif 'providersUpdateVisit' in request.form:
             print("UPDATING NEW VISIT")
             account_number = session['providerUpdateVisitID']
-            sqlData = []
+
             visit_date = request.form['visitDate']
             chief_complaint = request.form['chiefComplaint']
             diagnosis_code = request.form['diagnosisCode']
@@ -309,7 +324,7 @@ def providers():
             session['patientData'] = patientData
             #return render_template('providers.html', patientData=patientData)
 
-        return render_template('providers.html', diagnosisOptions=diagnosisOptions, patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
+        return render_template('providers.html', procedureOptions=procedureOptions, diagnosisOptions=diagnosisOptions, patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
 
     return render_template('providers.html')
 
