@@ -91,15 +91,7 @@ def providers():
     if session['providerUpdateVisitObj']:
         providerUpdateVisitObj = session['providerUpdateVisitObj']
     else:
-        providerUpdateVisitObj = [{'visitDate' : '',
-                                  'chiefComplaint' : '',
-                                  'diagnosisCode' : '',
-                                  'procedureCode' : '',
-                                  'patientID' : '',
-                                  'clinicID' : '',
-                                  'providerID' : '',
-                                  'providerNotes' : '',
-                                 }]
+        providerUpdateVisitObj = {}
     #Handler for parsing requests made from submission of one of the forms
     if request.method =='POST':
         print(request.form)
@@ -158,24 +150,19 @@ def providers():
         elif 'providersNewVisit' in request.form:
             print("ADDING NEW VISIT")
 
-            print("visit_date:", request.form['visitDate'])
             visit_date = request.form['visitDate']
-            print("chief_complaint:", request.form['chiefComplaint'])
             chief_complaint = request.form['chiefComplaint']
-            print("diagnosis_code:", request.form['diagnosisCode'])
             diagnosis_code = request.form['diagnosisCode']
-            print("procedure_code:", request.form['procedureCode'])
             procedure_code = request.form['procedureCode']
-            print("patient_mrn:", request.form['patientID'])
             patient_mrn = request.form['patientID']
-            print("clinic_id:", request.form['clinicID'])
             clinic_id = request.form['clinicID']
-            print("provider_id:", request.form['providerID'])
             provider_id = request.form['providerID']
-            print("notes_string:", request.form['providerNotes'])
             notes_string = request.form['providerNotes']
 
-            #TODO: INSERT into visits SQL
+            query = """INSERT INTO visits (visitDate, chiefComplaint, diagnosisCode, procedureCode, patient, provider, clinic, providerNotes)
+                            VALUES ('{}', '{}', '{}', '{}', {}, {}, {}, '{}');
+                            """.format(visit_date, chief_complaint, diagnosis_code, procedure_code, patient_mrn, clinic_id, provider_id, notes_string)
+            execute_query(db_connection, query)
 
         #Enter ID of Visit to update "Enter Account Number" = providersVisitLookup
         elif 'providersVisitLookup' in request.form:
@@ -184,7 +171,6 @@ def providers():
             visit_id = request.form['accountNumber']
             session['providerUpdateVisitID'] = visit_id
 
-            #TODO: SELECT visits SQL, insert into form fields bellow
             query = """SELECT visits.visitDate, visits.chiefComplaint, visits.diagnosisCode, visits.procedureCode, visits.patient, visits.clinic, visits.provider, visits.providerNotes  FROM visits
                         WHERE visits.accountNumber = {};""".format(visit_id)
             result = execute_query(db_connection, query)
@@ -198,7 +184,7 @@ def providers():
             providerUpdateVisitObj = json_data
             session['providerUpdateVisitObj'] = providerUpdateVisitObj
 
-        #Update Visit Information = providersUpdateVisit TODO: website Hangs after update
+        #Update Visit Information = providersUpdateVisit
         elif 'providersUpdateVisit' in request.form:
             print("UPDATING NEW VISIT")
             account_number = session['providerUpdateVisitID']
@@ -213,7 +199,7 @@ def providers():
 
             query = """UPDATE visits SET visitDate = '{}', chiefComplaint = '{}', diagnosisCode = '{}', procedureCode = '{}', patient = {}, clinic = {}, provider = {}, providerNotes = '{}'
                         WHERE accountNumber = {};""".format(visit_date, chief_complaint, diagnosis_code, procedure_code, patient_mrn, clinic_id, provider_id, notes_string, account_number)
-            result = execute_query(db_connection, query)
+            execute_query(db_connection, query)
 
             #clear the Update Visit Fields
             session['providerUpdateVisitObj'] = {}
