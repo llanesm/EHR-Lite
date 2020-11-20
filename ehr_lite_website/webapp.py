@@ -136,6 +136,9 @@ def providers():
             patient_mrn = request.form['medicalRecordNumber']
 
             #TODO: delete from patients SQL statement in DB
+            query = """DELETE FROM patients WHERE medicalRecordNumber = {};""".format(patient_mrn)
+
+            execute_query(db_connection, query)
 
         #Enter ID of Patient to update = providerLookupPatient
         elif 'providerLookupPatient' in request.form:
@@ -145,6 +148,7 @@ def providers():
             patient_mrn = request.form['patientID']
             session['patient_mrn'] = patient_mrn
 
+            #this query was not in dataManipulation.sql
             query = """SELECT medicalRecordNumber, fname, lname, birthdate, primaryCarePhysician, preferredPharmacy FROM patients
                             WHERE medicalRecordNumber = {};""".format(patient_mrn)
             result = execute_query(db_connection, query)
@@ -246,7 +250,7 @@ def providers():
             visit_id = request.form['accountNumber']
 
             query = """DELETE FROM visits WHERE accountNumber = {};""".format(visit_id)
-            result = execute_query(db_connection, query)
+            execute_query(db_connection, query)
 
         #View Visists by Date = viewVisits
         elif 'providersViewVisits' in request.form:
@@ -291,7 +295,6 @@ def providers():
             session['patientData'] = patientData
             #return render_template('providers.html', patientData=patientData)
 
-        print("providerPatientObj: ", providerPatientObj)
         return render_template('providers.html', patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
 
     return render_template('providers.html')
