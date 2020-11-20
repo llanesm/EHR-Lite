@@ -36,19 +36,21 @@
             <input type="submit" name="providerLookupPatient" value="1.) Lookup">
         </form>
         <br>
+        {% if providerPatientObj %}
         <form method ="POST">
             <label for="updatePatientFirstName">First Name</label>
-            <input type="text" id="updatePatientFirstName" name="fname"><br>
+            <input type="text" id="updatePatientFirstName" name="fname" value="{{ providerPatientObj[0]['fname'] }}"><br>
             <label for="updatePatientLastName">Last Name</label>
-            <input type="text" id="updatePatientLastName" name="lname"><br>
+            <input type="text" id="updatePatientLastName" name="lname" value="{{ providerPatientObj[0]['lname'] }}"><br>
             <label for="updatePatientBirthdate">Birthdate</label>
-            <input type="date" id="updatePatientBirthdate" name="birthdate"><br>
+            <input type="date" id="updatePatientBirthdate" name="birthdate" value="{{ providerPatientObj[0]['birthdate'] }}"><br>
             <label for="primaryCarePhysicianNum">Primary Care Physician #</label>
-            <input type="number" id="newPrimaryCarePhysician" name="primaryCarePhysicianNum"><br>
+            <input type="number" id="newPrimaryCarePhysician" name="primaryCarePhysicianNum" value="{{ providerPatientObj[0]['primaryCarePhysician'] }}"><br>
             <label for="preferredPharmacy">Preferred Pharmacy</label>
-            <input type="text" id="preferredPharmacy" name="preferredPharmacy"><br>
+            <input type="text" id="preferredPharmacy" name="preferredPharmacy" value="{{ providerPatientObj[0]['preferredPharmacy'] }}"><br>
             <input type="submit" name="providerUpdatePatient" value="2.) Update Info">
         </form>
+        {% endif %}
     </div>
 </div>
 

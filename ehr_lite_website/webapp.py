@@ -68,26 +68,42 @@ def providers():
         session['patientData']
         session['providerUpdateVisitID']
         session['providerUpdateVisitObj']
+        session['patient_mrn']
+        session['providerPatientObj']
     except KeyError as error:
+        session['patient_mrn'] = 0
+        session['providerPatientObj'] = 0
         session['visitData'] = 0
         session['patientData'] = 0
         session['providerUpdateVisitID'] = 0
         session['providerUpdateVisitObj'] = 0
         print("caught keyerror", error)
 
+    if session['patient_mrn']:
+        patient_mrn = session['patient_mrn']
+    else:
+        patient_mrn = -1
+
+    if session['providerPatientObj']:
+        providerPatientObj = session['providerPatientObj']
+    else:
+        providerPatientObj = {}
 
     if session['visitData']:
         visitData = session['visitData']
     else:
         visitData = {}
+
     if session['patientData']:
         patientData = session['patientData']
     else:
         patientData = {}
+
     if session['providerUpdateVisitID'] :
         providerUpdateVisitID = session['providerUpdateVisitID']
     else:
         providerUpdateVisitID = -1
+
     if session['providerUpdateVisitObj']:
         providerUpdateVisitObj = session['providerUpdateVisitObj']
     else:
@@ -124,26 +140,44 @@ def providers():
         #Enter ID of Patient to update = providerLookupPatient
         elif 'providerLookupPatient' in request.form:
             print("LOOKUP PATIENT INFO")
-            print("patient_mrn: ", request.form['patientID'])
-            patient_mrn = request.form['patientID']
 
-            #TODO: SELECT from patients SQL, populate forms with retuned info
+            #save patient id for update query form
+            patient_mrn = request.form['patientID']
+            session['patient_mrn'] = patient_mrn
+
+            query = """SELECT medicalRecordNumber, fname, lname, birthdate, primaryCarePhysician, preferredPharmacy FROM patients
+                            WHERE medicalRecordNumber = {};""".format(patient_mrn)
+            result = execute_query(db_connection, query)
+
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall() #be careful, this pop's the data as well
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+
+            providerPatientObj = json_data
+            session['providerPatientObj'] = providerPatientObj
+
         #Update Patient Information = providerUpdatePatient
         elif 'providerUpdatePatient' in request.form:
             print("UPDATING PATIENT INFO")
 
-            print("patient_fname:", request.form['fname'])
+            patient_mrn = session['patient_mrn']
+
             patient_fname = request.form['fname']
-            print("patient_lname:", request.form['lname'])
             patient_lname = request.form['lname']
-            print("patient_birthdate:", request.form['birthdate'])
             patient_birthdate = request.form['birthdate']
-            print("patient_pcp_num:", request.form['primaryCarePhysicianNum'])
             patient_pcp_num = request.form['primaryCarePhysicianNum']
-            print("patient_pharamcy:", request.form['preferredPharmacy'])
             patient_pharamcy = request.form['preferredPharmacy']
 
-            #TODO: UPDATE patients SQL, update patient in DB
+            query = """UPDATE patients SET fname = '{}', lname = '{}', birthdate = '{}', primaryCarePhysician = {}, preferredPharmacy = '{}'
+                            WHERE medicalRecordNumber = {};""".format(patient_fname, patient_lname, patient_birthdate, patient_pcp_num, patient_pharamcy, patient_mrn)
+
+            execute_query(db_connection, query)
+
+            #clear the Update Patient Fields
+            session['providerPatientObj'] = {}
+            providerPatientObj = {}
 
         # Access Visit Information in Providers Portal
         #New Visit = providersNewVisit
@@ -167,12 +201,13 @@ def providers():
         #Enter ID of Visit to update "Enter Account Number" = providersVisitLookup
         elif 'providersVisitLookup' in request.form:
             print("LOOKING UP VISIT BEFORE UPDATE")
-            print("visit_id: ", request.form['accountNumber'])
+
+            #save visit id for update query form
             visit_id = request.form['accountNumber']
             session['providerUpdateVisitID'] = visit_id
 
-            query = """SELECT visits.visitDate, visits.chiefComplaint, visits.diagnosisCode, visits.procedureCode, visits.patient, visits.clinic, visits.provider, visits.providerNotes  FROM visits
-                        WHERE visits.accountNumber = {};""".format(visit_id)
+            query = """SELECT visitDate, chiefComplaint, diagnosisCode, procedureCode, patient, clinic, provider, providerNotes  FROM visits
+                        WHERE accountNumber = {};""".format(visit_id)
             result = execute_query(db_connection, query)
 
             row_headers = [x[0] for x in result.description]
@@ -204,8 +239,6 @@ def providers():
             #clear the Update Visit Fields
             session['providerUpdateVisitObj'] = {}
             providerUpdateVisitObj = {}
-            return render_template('providers.html', patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj)
-
 
         #Delete Visit = providersDeleteVisit
         elif 'providersDeleteVisit' in request.form:
@@ -258,10 +291,9 @@ def providers():
             session['patientData'] = patientData
             #return render_template('providers.html', patientData=patientData)
 
-        print("providerUpdateVisitObj: ", providerUpdateVisitObj)
-        return render_template('providers.html', patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj)
-        #reload the same providers page after POST
-        #return redirect(url_for('providers'))
+        print("providerPatientObj: ", providerPatientObj)
+        return render_template('providers.html', patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
+
     return render_template('providers.html')
 
 
