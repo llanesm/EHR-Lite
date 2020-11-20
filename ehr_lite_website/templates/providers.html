@@ -85,19 +85,19 @@
         {% if providerUpdateVisitObj %}
         <form method="POST">
             <label for="updateVisitDate">Date</label>
-            <input type="date" id="updateVisitDate" name="visitDate"><br>
+            <input type="date" id="updateVisitDate" name="visitDate" value="{{ providerUpdateVisitObj[0]['visitDate'] }}"><br>
             <label for="updateChiefComplaint">Chief Complaint</label>
-            <input type="text" id="updateChiefComplaint" name="chiefComplaint"><br>
+            <input type="text" id="updateChiefComplaint" name="chiefComplaint" value="{{ providerUpdateVisitObj[0]['chiefComplaint'] }}"><br>
             <label for="newDiagnosisCode">Diagnosis</label>
-            <input type="text" id="newDiagnosisCode" name="diagnosisCode"><br>
+            <input type="text" id="newDiagnosisCode" name="diagnosisCode" value="{{ providerUpdateVisitObj[0]['diagnosisCode'] }}"><br>
             <label for="newProcedureCode">Procedure</label>
-            <input type="text" id="newProcedureCode" name="procedureCode"><br>
+            <input type="text" id="newProcedureCode" name="procedureCode" value="{{ providerUpdateVisitObj[0]['procedureCode'] }}"><br>
             <label for="patient">Patient ID</label>
-            <input type="number" id="patient" name="patientID"><br>
+            <input type="number" id="patient" name="patientID" value="{{ providerUpdateVisitObj[0]['patient'] }}"><br>
             <label for="clinic">Clinic ID</label>
-            <input type="number" id="clinic" name="clinicID"><br>
+            <input type="number" id="clinic" name="clinicID" value="{{ providerUpdateVisitObj[0]['clinic'] }}"><br>
             <label for="provider">Provider ID</label>
-            <input type="number" id="provider" name="providerID"><br>
+            <input type="number" id="provider" name="providerID" value="{{ providerUpdateVisitObj[0]['provider'] }}"><br>
             <label for="providerNotes">Notes</label>
             <input type="text" id="providerNotes" name="providerNotes" value="{{ providerUpdateVisitObj[0]['providerNotes'] }}"><br>
             <input type="submit" name="providersUpdateVisit" value="2.) Update Info">

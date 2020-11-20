@@ -182,6 +182,7 @@ def providers():
             print("LOOKING UP VISIT BEFORE UPDATE")
             print("visit_id: ", request.form['accountNumber'])
             visit_id = request.form['accountNumber']
+            session['providerUpdateVisitID'] = visit_id
 
             #TODO: SELECT visits SQL, insert into form fields bellow
             query = """SELECT visits.visitDate, visits.chiefComplaint, visits.diagnosisCode, visits.procedureCode, visits.patient, visits.clinic, visits.provider, visits.providerNotes  FROM visits
@@ -197,10 +198,10 @@ def providers():
             providerUpdateVisitObj = json_data
             session['providerUpdateVisitObj'] = providerUpdateVisitObj
 
-        #Update Visit Information = providersUpdateVisit
+        #Update Visit Information = providersUpdateVisit TODO: website Hangs after update
         elif 'providersUpdateVisit' in request.form:
             print("UPDATING NEW VISIT")
-            account_number = session['providerUpdateVisitID']   #TODO, get account number that was passed from previous call
+            account_number = session['providerUpdateVisitID']
             visit_date = request.form['visitDate']
             chief_complaint = request.form['chiefComplaint']
             diagnosis_code = request.form['diagnosisCode']
@@ -210,10 +211,14 @@ def providers():
             provider_id = request.form['providerID']
             notes_string = request.form['providerNotes']
 
-            #TODO: UPDATE visits SQL
-            query = """UPDATE visits SET visitDate = {}, chiefComplaint = {}, diagnosisCode = {}, procedureCode = {}, patient = {}, clinic = {}, provider = {}, providerNotes = {}
+            query = """UPDATE visits SET visitDate = '{}', chiefComplaint = '{}', diagnosisCode = '{}', procedureCode = '{}', patient = {}, clinic = {}, provider = {}, providerNotes = '{}'
                         WHERE accountNumber = {};""".format(visit_date, chief_complaint, diagnosis_code, procedure_code, patient_mrn, clinic_id, provider_id, notes_string, account_number)
             result = execute_query(db_connection, query)
+
+            #clear the Update Visit Fields
+            session['providerUpdateVisitObj'] = {}
+            providerUpdateVisitObj = {}
+            return render_template('providers.html', patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj)
 
 
         #Delete Visit = providersDeleteVisit
