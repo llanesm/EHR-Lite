@@ -67,7 +67,7 @@ CREATE TABLE `visits` (
     PRIMARY KEY (`accountNumber`),
     FOREIGN KEY (`diagnosisCode`) REFERENCES diagnoses(`diagnosisCode`),
     FOREIGN KEY (`procedureCode`) REFERENCES procedures(`procedureCode`),
-    FOREIGN KEY (`patient`) REFERENCES patients(`medicalRecordNumber`),
+    FOREIGN KEY (`patient`) REFERENCES patients(`medicalRecordNumber`) ON DELETE CASCADE,
     FOREIGN KEY (`provider`) REFERENCES providers(`providerID`),
     FOREIGN KEY (`clinic`) REFERENCES clinics(`clinicID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

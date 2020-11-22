@@ -6,107 +6,132 @@
 <div id="patientRecords">
     <div class="recordsBox">
         <h3>New Patient</h3>
-        <form>
+        <form method ="POST">
             <label for="newPatientFirstName">First Name</label>
-            <input type="text" id="newPatientFirstName" name="fname"><br>
+            <input type="text" id="newPatientFirstName" name="newPatientFirstName"><br>
             <label for="newPatientLastName">Last Name</label>
-            <input type="text" id="newPatientLastName" name="lname"><br>
+            <input type="text" id="newPatientLastName" name="newPatientLastName"><br>
             <label for="newPatientBirthdate">Birthdate</label>
-            <input type="date" id="newPatientBirthdate" name="birthdate"><br>
-            <label for="primaryCarePhysician">Primary Care Physician</label>
+            <input type="date" id="newPatientBirthdate" name="newPatientBirthdate"><br>
+            <label for="primaryCarePhysician">Primary Care Physician #</label>
             <input type="text" id="primaryCarePhysician" name="primaryCarePhysician"><br>
             <label for="preferredPharmacy">Preferred Pharmacy</label>
-            <input type="text" id="preferredPharmacy" name="preferredPharmacy"><br>
-            <input type="submit" value="Add New Patient">
+            <input type="text" id="patientPreferredPharmacy" name="patientPreferredPharmacy"><br>
+            <input type="submit" name="providerNewPatient" value="Add New Patient">
         </form>
     </div>
     <div class="recordsBox">
         <h3>Discharge Patient</h3>
-        <form>
+        <form method ="POST">
             <label for="medicalRecordNumber">Enter Patient Medical Record Number</label>
             <input type="number" id="medicalRecordNumber" name="medicalRecordNumber">
-            <input type="submit" value="Discharge Patient">
+            <input type="submit" name="providerDischargePatient" value="Discharge Patient">
         </form>
     </div>
     <div class="recordsBox">
         <h3>Update Patient Information</h3>
-        <form>
+        <form method ="POST">
             <label for="lookupPatientID">Enter ID of Patient to update</label>
             <input type="number" id="lookupPatientID" name="patientID">
-            <input type="submit" value="Submit"
-        </form><br>
-        <form>
-            <label for="updatePatientFirstName">First Name</label>
-            <input type="text" id="updatePatientFirstName" name="fname"><br>
-            <label for="updatePatientLastName">Last Name</label>
-            <input type="text" id="updatePatientLastName" name="lname"><br>
-            <label for="updatePatientBirthdate">Birthdate</label>
-            <input type="date" id="updatePatientBirthdate" name="birthdate"><br>
-            <label for="newPrimaryCarePhysician">Primary Care Physician</label>
-            <input type="text" id="newPrimaryCarePhysician" name="primaryCarePhysician"><br>
-            <label for="newPreferredPharmacy">Preferred Pharmacy</label>
-            <input type="text" id="newPreferredPharmacy" name="preferredPharmacy"><br>
-            <input type="submit" value="Update Info">
+            <input type="submit" name="providerLookupPatient" value="1.) Lookup">
         </form>
+        <br>
+        {% if providerPatientObj %}
+        <form method ="POST">
+            <label for="updatePatientFirstName">First Name</label>
+            <input type="text" id="updatePatientFirstName" name="fname" value="{{ providerPatientObj[0]['fname'] }}"><br>
+            <label for="updatePatientLastName">Last Name</label>
+            <input type="text" id="updatePatientLastName" name="lname" value="{{ providerPatientObj[0]['lname'] }}"><br>
+            <label for="updatePatientBirthdate">Birthdate</label>
+            <input type="date" id="updatePatientBirthdate" name="birthdate" value="{{ providerPatientObj[0]['birthdate'] }}"><br>
+            <label for="primaryCarePhysicianNum">Primary Care Physician #</label>
+            <input type="number" id="newPrimaryCarePhysician" name="primaryCarePhysicianNum" value="{{ providerPatientObj[0]['primaryCarePhysician'] }}"><br>
+            <label for="preferredPharmacy">Preferred Pharmacy</label>
+            <input type="text" id="preferredPharmacy" name="preferredPharmacy" value="{{ providerPatientObj[0]['preferredPharmacy'] }}"><br>
+            <input type="submit" name="providerUpdatePatient" value="2.) Update Info">
+        </form>
+        {% endif %}
     </div>
 </div>
 
 <div id="visitRecords">
     <div class="recordsBox">
         <h3>New Visit</h3>
-        <form>
+        <form method ="POST">
             <label for="newVisitDate">Date</label>
             <input type="date" id="newVisitDate" name="visitDate"><br>
             <label for="chiefComplaint">Chief Complaint</label>
             <input type="text" id="chiefComplaint" name="chiefComplaint"><br>
             <label for="diagnosisCode">Diagnosis</label>
-            <input type="number" id="diagnosisCode" name="diagnosisCode"><br>
+            <input type="text" id="diagnosisCode" name="diagnosisCode"><br>
             <label for="procedureCode">Procedure</label>
-            <input type="number" id="procedureCode" name="procedureCode"><br>
+            <input type="text" id="procedureCode" name="procedureCode"><br>
             <label for="patient">Patient ID</label>
             <input type="number" id="patient" name="patientID"><br>
             <label for="clinic">Clinic ID</label>
-            <input type="number" id="clinic"><br>
+            <input type="number" id="clinic" name="clinicID"><br>
             <label for="provider">Provider ID</label>
-            <input type="number" id="provider"><br>
+            <input type="number" id="provider" name="providerID"><br>
             <label for="providerNotes">Notes</label>
-            <input type="text" id="providerNotes"><br>
-            <input type="submit" value="Submit">
+            <input type="text" id="providerNotes" name="providerNotes"><br>
+            <input type="submit" name="providersNewVisit" value="Submit">
         </form>
     </div>
     <div class="recordsBox">
         <h3>Update Visit Information</h3>
-        <form>
+        <form method="POST">
             <label for="visitAccountNumber">Enter Account Number</label>
             <input type="number" id="visitAccountNumber" name="accountNumber">
-            <input type="submit" value="Submit">
+            <input type="submit" name="providersVisitLookup" value="1.) Lookup">
         </form><br>
-        <form>
+        {% if providerUpdateVisitObj %}
+        <form method="POST">
             <label for="updateVisitDate">Date</label>
-            <input type="date" id="updateVisitDate" name="visitDate"><br>
+            <input type="date" id="updateVisitDate" name="visitDate" value="{{ providerUpdateVisitObj[0]['visitDate'] }}"><br>
             <label for="updateChiefComplaint">Chief Complaint</label>
-            <input type="text" id="updateChiefComplaint" name="chiefComplaint"><br>
+            <input type="text" id="updateChiefComplaint" name="chiefComplaint" value="{{ providerUpdateVisitObj[0]['chiefComplaint'] }}"><br>
             <label for="newDiagnosisCode">Diagnosis</label>
-            <input type="number" id="newDiagnosisCode" name="diagnosisCode"><br>
+            {% if diagnosisOptions %}
+            <select id="diagnosisOptions" name="diagnosisCode">
+                {% for option in diagnosisOptions %}
+                    {% if option == providerUpdateVisitObj[0]['diagnosisCode'] %}
+                        <option value="{{ option }}" selected>{{ option }}</option>
+                    {% else %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% endif %}
             <label for="newProcedureCode">Procedure</label>
-            <input type="number" id="newProcedureCode" name="procedureCode"><br>
+            {% if procedureOptions %}
+            <select id="newProcedureCode" name="procedureCode" value=>
+                {% for option in procedureOptions %}
+                    {% if option == providerUpdateVisitObj[0]['procedureCode'] %}
+                        <option value="{{ option }}" selected>{{ option }}</option>
+                    {% else %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% endif %}
             <label for="patient">Patient ID</label>
-            <input type="number" id="patient" name="patientID"><br>
+            <input type="number" id="patient" name="patientID" value="{{ providerUpdateVisitObj[0]['patient'] }}"><br>
             <label for="clinic">Clinic ID</label>
-            <input type="number" id="clinic"><br>
+            <input type="number" id="clinic" name="clinicID" value="{{ providerUpdateVisitObj[0]['clinic'] }}"><br>
             <label for="provider">Provider ID</label>
-            <input type="number" id="provider"><br>
+            <input type="number" id="provider" name="providerID" value="{{ providerUpdateVisitObj[0]['provider'] }}"><br>
             <label for="providerNotes">Notes</label>
-            <input type="text" id="providerNotes"><br>
-            <input type="submit" value="Submit">
+            <input type="text" id="providerNotes" name="providerNotes" value="{{ providerUpdateVisitObj[0]['providerNotes'] }}"><br>
+            <input type="submit" name="providersUpdateVisit" value="2.) Update Info">
         </form>
+        {% endif %}
     </div>
     <div class="recordsBox">
         <h3>Delete Visit</h3>
-        <form>
+        <form method="POST">
             <label for="deleteAccountNumber">Account Number</label>
             <input type="number" id="deleteAccountNumber" name="accountNumber">
-            <input type="submit" value="Delete Visit">
+            <input type="submit" name="providersDeleteVisit" value="Delete Visit">
         </form>
     </div>
 </div>
@@ -114,10 +139,10 @@
 <div id="providersTables">
     <div id="providersViewVisits">
         <h3>View Visits by Date</h3>
-        <form>
+        <form method="POST">
             <label for="byVisitDate">Enter Date</label>
             <input type="date" id="byVisitDate" name="visitDate"><br>
-            <input type="submit" value="Submit">
+            <input type="submit" name="providersViewVisits" value="Submit">
         </form>
         <table>
             <tr>
@@ -130,14 +155,26 @@
                 <th>Provider</th>
                 <th>Notes</th>
             </tr>
+            {%for row in visitData%}
+                <tr>
+                    <td>{{ row['accountNumber'] }}</td>
+                    <td>{{ row['patient'] }}</td>
+                    <td>{{ row['chiefComplaint'] }}</td>
+                    <td>{{ row['clinicName'] }}</td>
+                    <td>{{ row['diagnosisName'] }}</td>
+                    <td>{{ row['procedureName'] }}</td>
+                    <td>{{ row['PCP'] }}</td>
+                    <td>{{ row['providerNotes'] }}</td>
+                </tr>
+            {% endfor %}
         </table>
     </div>
     <div id="providersViewPatients">
         <h3>View Patients of Provider</h3>
-        <form>
+        <form method="POST">
             <label for="byProvider">Enter Provider ID</label>
             <input type="number" id="byProvider" name="providerID"><br>
-            <input type="submit" value="Submit"
+            <input type="submit" name="viewProviderPatients" value="Submit">
         </form>
         <table>
             <tr>
@@ -148,6 +185,16 @@
                 <th>PCP</th>
                 <th>Preferred Pharmacy</th>
             </tr>
+            {%for row in patientData%}
+                <tr>
+                    <td>{{ row['medicalRecordNumber'] }}</td>
+                    <td>{{ row['fname'] }}</td>
+                    <td>{{ row['lname'] }}</td>
+                    <td>{{ row['birthdate'] }}</td>
+                    <td>{{ row['PCP'] }}</td>
+                    <td>{{ row['preferredPharmacy'] }}</td>
+                </tr>
+            {% endfor %}
         </table>
     </div>
 </div>
