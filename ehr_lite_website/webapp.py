@@ -367,7 +367,7 @@ def admin():
 
             query = """
                     INSERT INTO providers (fname, lname, licenseType, licenseNumber, specialty, primaryCare)
-                    VALUES ('{}', '{}', '{}', '{}', '{}', '{}');
+                    VALUES ('{}', '{}', '{}', {}, '{}', '{}');
                     """.format(fname, lname, licenseType, licenseNumber, specialty, primaryCare)
             execute_query(db_connection, query)
 
@@ -375,6 +375,7 @@ def admin():
         elif 'adminNewClinic' in request.form:
             print('ADDING NEW CLINIC')
 
+            name = request.form['clinicName']
             specialty = request.form['specialty']
             providerCapacity = request.form['providerCapacity']
             examRooms = request.form['examRooms']
@@ -382,8 +383,8 @@ def admin():
 
             query = """
                     INSERT INTO clinics (clinicName, specialty, providerCapacity, examRooms, primaryCare)
-                    VALUES ('{}', '{}', '{}', '{}');
-                    """.format(specialty, providerCapacity, examRooms, primaryCare)
+                    VALUES ('{}', '{}', {}, {}, '{}');
+                    """.format(name, specialty, providerCapacity, examRooms, primaryCare)
             execute_query(db_connection, query)
 
         # Display table of patients that are patients of a given clinic
