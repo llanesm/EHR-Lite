@@ -121,7 +121,7 @@ def admin():
                         FROM patients
                         JOIN visits ON visits.patient = patients.medicalRecordNumber
                         JOIN clinics ON clinics.clinicID = visits.clinic
-                        WHERE clinics.clinicID = '{}';""".format(patientsClinicID)
+                        WHERE clinics.clinicID = {};""".format(patientsClinicID)
             result = execute_query(db_connection, query)
 
             row_headers = [x[0] for x in result.description]
@@ -142,7 +142,7 @@ def admin():
                         providers.licenseNumber, providers.specialty, providers.primaryCare
                         FROM providers
                         JOIN providersClinics ON providersClinics.providerID = providers.providerID
-                        WHERE providersClinics.clinicID = '{}';""".format(providersClinicID)
+                        WHERE providersClinics.clinicID = {};""".format(providersClinicID)
             result = execute_query(db_connection, query)
 
             row_headers = [x[0] for x in result.description]
