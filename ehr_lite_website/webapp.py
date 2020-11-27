@@ -18,7 +18,7 @@ def hello():
 
 @webapp.route('/', methods=['GET', 'POST'])
 def home():
-    #establish sessions to prevent keyErrors
+    #establish sessions keys to prevent keyErrors
     session['visitData'] = 0
     session['patientData'] = 0
     session['providerUpdateVisitID'] = 0
@@ -27,6 +27,7 @@ def home():
     session['providerPatientObj'] = 0
     session['diagnosisOptions'] = 0
     session['procedureOptions'] = 0
+
 
     if request.method =='POST':
         print("REQUEST.FORM: ", request.form)
@@ -76,6 +77,7 @@ def providers():
         session['providerPatientObj']
         session['diagnosisOptions']
         session['procedureOptions']
+        session['providerOptions']
     except KeyError as error:
         session['patient_mrn'] = 0
         session['providerPatientObj'] = 0
@@ -85,19 +87,11 @@ def providers():
         session['providerUpdateVisitObj'] = 0
         session['diagnosisOptions'] = 0
         session['procedureOptions'] = 0
+        session['providerOptions'] = 0
         print("caught keyerror", error)
 
-    if session['procedureOptions']:
-        procedureOptions = session['procedureOptions']
-    else:
-        query = "SELECT procedureCode FROM procedures"
-        result = execute_query(db_connection, query)
-        row_headers = [x[0] for x in result.description]
-        row_variables = result.fetchall()
-        procedureOptions = []
-        for row_string in row_variables:
-            procedureOptions.append(row_string[0])
-
+    #Combobox information:
+    #Diagnosis Codes
     if session['diagnosisOptions']:
         diagnosisOptions = session['diagnosisOptions']
     else:
@@ -108,6 +102,29 @@ def providers():
         diagnosisOptions = []
         for row_string in row_variables:
             diagnosisOptions.append(row_string[0])
+        session['diagnosisOptions'] = diagnosisOptions
+    #Provider ID's
+    if session['providerOptions']:
+        providerOptions = session['providerOptions']
+    else:
+        query = "SELECT providerID FROM providers"
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall()
+        providerOptions = []
+        for row_string in row_variables:
+            providerOptions.append(row_string[0])
+        session['providerOptions'] = providerOptions
+    if session['procedureOptions']:
+        procedureOptions = session['procedureOptions']
+    else:
+        query = "SELECT procedureCode FROM procedures"
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall()
+        procedureOptions = []
+        for row_string in row_variables:
+            procedureOptions.append(row_string[0])
 
     if session['patient_mrn']:
         patient_mrn = session['patient_mrn']
@@ -324,9 +341,11 @@ def providers():
             session['patientData'] = patientData
             #return render_template('providers.html', patientData=patientData)
 
-        return render_template('providers.html', procedureOptions=procedureOptions, diagnosisOptions=diagnosisOptions, patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
+        print("providerPatientObj: ", providerPatientObj)
+        print("providerOptions: ", providerOptions)
+        return render_template('providers.html', providerOptions=providerOptions, procedureOptions=procedureOptions, diagnosisOptions=diagnosisOptions, patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
 
-    return render_template('providers.html')
+    return render_template('providers.html',  providerOptions=providerOptions, procedureOptions=procedureOptions, diagnosisOptions=diagnosisOptions, patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
 
 
 @webapp.route('/admin', methods=['GET', 'POST'])
