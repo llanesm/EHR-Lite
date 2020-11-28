@@ -56,34 +56,29 @@
             {% endif %}
         </table>
     </div>
-    <div id="updatePatientClinic">
-        <h3>Update Patient Clinic</h3>
+    <div id="patientClinicTable">
+        <h3>Patient Clinic</h3>
         <table>
             <tr>
                 <th>Account Number</th>
-                <th>Visit Date</th>
-                <th>Chief Complaint</th>
-                <th>Diagnosis</th>
-                <th>Procedure</th>
-                <th>Clinic</th>
-                <th>Provider</th>
-                <th>Notes</th>
+                <th>Patient Name</th>
+                <th>Patient Clinic</th>
+                <th>Delete Relation</th>
             </tr>
-        </table>
-    </div>
-    <div id="deletePatienClinic">
-        <h3>Delete Patient's Clinic</h3>
-        <table>
-            <tr>
-                <th>Account Number</th>
-                <th>Visit Date</th>
-                <th>Chief Complaint</th>
-                <th>Diagnosis</th>
-                <th>Procedure</th>
-                <th>Clinic</th>
-                <th>Provider</th>
-                <th>Notes</th>
-            </tr>
+            {% if patientClinics %}
+            {%for row in patientClinics%}
+                <tr>
+                    <form method='POST'>
+                        <td>{{ row['medicalRecordNumber'] }}</td>
+                        <td>{{ row['patientName'] }}</td>
+                        <td>{{ row['clinicName'] }}</td>
+                        <td><input type="submit" name="deletePatientClinicRelation" value="Delete"></td>
+                        <input type="hidden" name="deletePatientClinicRelationPatient" value="{{ row['medicalRecordNumber'] }}">
+                        <input type="hidden" name="deletePatientClinicRelationClinic" value="{{ row['clinicID'] }}">
+                    </form>
+                </tr>
+            {% endfor %}
+            {% endif %}
         </table>
     </div>
 </div>

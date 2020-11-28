@@ -59,6 +59,24 @@ def patient():
     #setup for connecting to our database
     db_connection = connect_to_database()
 
+    #patientClinic information
+    if session["patientID"]:
+        query = """SELECT patients.medicalRecordNumber, CONCAT(patients.fname, ' ', patients.lname) AS 'patientName', clinics.clinicID, clinics.clinicName from patients
+                        JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber
+                        JOIN clinics ON clinics.clinicID = patientsClinics.clinicID
+                        WHERE patients.medicalRecordNumber= {};""".format(session["patientID"])
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall() #be careful, this pop's the data as well
+        json_data = []
+        for row_string in row_variables:
+            json_data.append(dict(zip(row_headers, row_string)))
+        patientClinics = json_data
+        session['patientClinics'] = patientClinics
+    else:
+        patientClinics = None
+
+    #patient Medical History information
     if session["patientID"]:
         query = """SELECT patients.medicalRecordNumber, visits.visitDate, visits.chiefComplaint, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', diagnoses.diagnosisName, procedures.procedureName, clinics.clinicName, visits.providerNotes FROM visits
                     JOIN patients ON patients.medicalRecordNumber = visits.patient
@@ -75,8 +93,6 @@ def patient():
             json_data.append(dict(zip(row_headers, row_string)))
         patientHistory = json_data
         session['patientHistory'] = patientHistory
-
-        print("patientHistory: ", patientHistory)
     else:
         patientHistory = None
 
@@ -117,10 +133,33 @@ def patient():
 
             execute_query(db_connection, query)
 
-        return render_template('patient.html', providerOptions=providerOptions, patientHistory=patientHistory)
+        if 'deletePatientClinicRelation' in request.form:
+            print("DELETING PATIENTCLINICS RELATION")
+
+            patient_mrn = request.form['deletePatientClinicRelationPatient']
+            clinicID = request.form['deletePatientClinicRelationClinic']
+            query = """DELETE FROM patientsClinics WHERE patientsClinics.patientID={} AND patientsClinics.clinicID={}""".format(patient_mrn, clinicID)
+
+            execute_query(db_connection, query)
+
+            #delete from object here????
+            query = """SELECT patients.medicalRecordNumber, CONCAT(patients.fname, ' ', patients.lname) AS 'patientName', clinics.clinicID, clinics.clinicName from patients
+                        JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber
+                        JOIN clinics ON clinics.clinicID = patientsClinics.clinicID
+                        WHERE patients.medicalRecordNumber= {};""".format(session["patientID"])
+            result = execute_query(db_connection, query)
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall() #be careful, this pop's the data as well
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+            patientClinics = json_data
+            session['patientClinics'] = patientClinics
+
+        return render_template('patient.html', patientClinics=patientClinics, providerOptions=providerOptions, patientHistory=patientHistory)
 
 
-    return render_template('patient.html', providerOptions=providerOptions, patientHistory=patientHistory)
+    return render_template('patient.html', patientClinics=patientClinics, providerOptions=providerOptions, patientHistory=patientHistory)
 
 
 
