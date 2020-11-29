@@ -13,8 +13,17 @@
             <input type="text" id="newPatientLastName" name="newPatientLastName"><br>
             <label for="newPatientBirthdate">Birthdate</label>
             <input type="date" id="newPatientBirthdate" name="newPatientBirthdate"><br>
+            {% if providerOptions %}
             <label for="primaryCarePhysician">Primary Care Physician #</label>
-            <input type="text" id="primaryCarePhysician" name="primaryCarePhysician"><br>
+            <select id="primaryCarePhysician" name="primaryCarePhysician">
+                {% for option in providerOptions %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
+            <br>
+            <!-- <label for="primaryCarePhysician">Primary Care Physician #</label>
+            <input type="text" id="primaryCarePhysician" name="primaryCarePhysician"><br> -->
             <label for="preferredPharmacy">Preferred Pharmacy</label>
             <input type="text" id="patientPreferredPharmacy" name="patientPreferredPharmacy"><br>
             <input type="submit" name="providerNewPatient" value="Add New Patient">
@@ -45,7 +54,23 @@
             <label for="updatePatientBirthdate">Birthdate</label>
             <input type="date" id="updatePatientBirthdate" name="birthdate" value="{{ providerPatientObj[0]['birthdate'] }}"><br>
             <label for="primaryCarePhysicianNum">Primary Care Physician #</label>
-            <input type="number" id="newPrimaryCarePhysician" name="primaryCarePhysicianNum" value="{{ providerPatientObj[0]['primaryCarePhysician'] }}"><br>
+            {% if providerOptions %}
+            <select id="primaryCarePhysicianNum" name="primaryCarePhysicianNum">
+                {% for option in providerOptions %}
+                    {% if providerPatientObj[0]['primaryCarePhysician'] %}
+                        {% if option == providerPatientObj[0]['primaryCarePhysician'] %}
+                            <option value="{{ option }}" selected>{{ option }}</option>
+                        {% else %}
+                            <option value="{{ option }}">{{ option }}</option>
+                        {% endif %}
+                    {% else %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% endif %}
+            <br>
+            <!-- <input type="number" id="newPrimaryCarePhysician" name="primaryCarePhysicianNum" value="{{ providerPatientObj[0]['primaryCarePhysician'] }}"><br> -->
             <label for="preferredPharmacy">Preferred Pharmacy</label>
             <input type="text" id="preferredPharmacy" name="preferredPharmacy" value="{{ providerPatientObj[0]['preferredPharmacy'] }}"><br>
             <input type="submit" name="providerUpdatePatient" value="2.) Update Info">

@@ -18,7 +18,7 @@ def hello():
 
 @webapp.route('/', methods=['GET', 'POST'])
 def home():
-    #establish sessions to prevent keyErrors
+    #establish sessions keys to prevent keyErrors
     session['visitData'] = 0
     session['patientData'] = 0
     session['providerUpdateVisitID'] = 0
@@ -27,6 +27,7 @@ def home():
     session['providerPatientObj'] = 0
     session['diagnosisOptions'] = 0
     session['procedureOptions'] = 0
+    session["patientID"] = 0
 
     if request.method =='POST':
         print("REQUEST.FORM: ", request.form)
@@ -41,6 +42,7 @@ def home():
         elif request.form['userType'] =="patient":
             print("PRINT: userTYPE: ")
             print(request.form['userType'], file=sys.stdout)
+            session["patientID"] = request.form['userID']
             return redirect(url_for('patient')) #pass id number here for redirect
         #if routing to admin
         elif request.form['userType'] =="admin":
@@ -52,9 +54,112 @@ def home():
 
 
 
-@webapp.route('/patient')
+@webapp.route('/patient', methods=['GET', 'POST'])
 def patient():
-    return render_template('patient.html')
+    #setup for connecting to our database
+    db_connection = connect_to_database()
+
+    #patientClinic information
+    if session["patientID"]:
+        query = """SELECT patients.medicalRecordNumber, CONCAT(patients.fname, ' ', patients.lname) AS 'patientName', clinics.clinicID, clinics.clinicName from patients
+                        JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber
+                        JOIN clinics ON clinics.clinicID = patientsClinics.clinicID
+                        WHERE patients.medicalRecordNumber= {};""".format(session["patientID"])
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall() #be careful, this pop's the data as well
+        json_data = []
+        for row_string in row_variables:
+            json_data.append(dict(zip(row_headers, row_string)))
+        patientClinics = json_data
+        session['patientClinics'] = patientClinics
+    else:
+        patientClinics = None
+
+    #patient Medical History information
+    if session["patientID"]:
+        query = """SELECT patients.medicalRecordNumber, visits.visitDate, visits.chiefComplaint, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', diagnoses.diagnosisName, procedures.procedureName, clinics.clinicName, visits.providerNotes FROM visits
+                    JOIN patients ON patients.medicalRecordNumber = visits.patient
+                    JOIN clinics  ON clinics.clinicID = visits.clinic
+                    JOIN providers ON providers.providerID = visits.provider
+                    JOIN diagnoses ON diagnoses.diagnosisCode = visits.diagnosisCode
+                    JOIN procedures ON procedures.procedureCode = visits.procedureCode
+                    WHERE patients.medicalRecordNumber = {};""".format(session["patientID"])
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall() #be careful, this pop's the data as well
+        json_data = []
+        for row_string in row_variables:
+            json_data.append(dict(zip(row_headers, row_string)))
+        patientHistory = json_data
+        session['patientHistory'] = patientHistory
+    else:
+        patientHistory = None
+
+    try:
+        session['providerOptions']
+    except KeyError as error:
+        session['providerOptions'] = 0
+        print("caught keyerror", error)
+
+
+    if session['providerOptions']:
+        providerOptions = session['providerOptions']
+    else:
+        query = "SELECT providerID FROM providers"
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall()
+        providerOptions = []
+        for row_string in row_variables:
+            providerOptions.append(row_string[0])
+        session['providerOptions'] = providerOptions
+
+
+    if request.method =='POST':
+        #Accessing Patient Information in Providers Portal
+        #New Patient = providerNewPatient
+        if 'patientNewPatient' in request.form:
+            print("ADDING PATIENT INFO")
+
+            patient_fname = request.form['newPatientFirstName']
+            patient_lname = request.form['newPatientLastName']
+            patient_birthdate = request.form['newPatientBirthdate']
+            patient_pcp = request.form['primaryCarePhysician']
+            patient_pharamcy = request.form['patientPreferredPharmacy']
+
+            query = """INSERT INTO patients (fname, lname, birthdate, preferredPharmacy, primaryCarePhysician)
+                            VALUES ('{}', '{}', '{}', '{}', {});""".format(patient_fname, patient_lname, patient_birthdate, patient_pharamcy,  patient_pcp)
+
+            execute_query(db_connection, query)
+
+        if 'deletePatientClinicRelation' in request.form:
+            print("DELETING PATIENTCLINICS RELATION")
+
+            patient_mrn = request.form['deletePatientClinicRelationPatient']
+            clinicID = request.form['deletePatientClinicRelationClinic']
+            query = """DELETE FROM patientsClinics WHERE patientsClinics.patientID={} AND patientsClinics.clinicID={}""".format(patient_mrn, clinicID)
+
+            execute_query(db_connection, query)
+
+            #delete from object here????
+            query = """SELECT patients.medicalRecordNumber, CONCAT(patients.fname, ' ', patients.lname) AS 'patientName', clinics.clinicID, clinics.clinicName from patients
+                        JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber
+                        JOIN clinics ON clinics.clinicID = patientsClinics.clinicID
+                        WHERE patients.medicalRecordNumber= {};""".format(session["patientID"])
+            result = execute_query(db_connection, query)
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall() #be careful, this pop's the data as well
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+            patientClinics = json_data
+            session['patientClinics'] = patientClinics
+
+        return render_template('patient.html', patientClinics=patientClinics, providerOptions=providerOptions, patientHistory=patientHistory)
+
+
+    return render_template('patient.html', patientClinics=patientClinics, providerOptions=providerOptions, patientHistory=patientHistory)
 
 
 
@@ -76,6 +181,7 @@ def providers():
         session['providerPatientObj']
         session['diagnosisOptions']
         session['procedureOptions']
+        session['providerOptions']
     except KeyError as error:
         session['patient_mrn'] = 0
         session['providerPatientObj'] = 0
@@ -85,19 +191,11 @@ def providers():
         session['providerUpdateVisitObj'] = 0
         session['diagnosisOptions'] = 0
         session['procedureOptions'] = 0
+        session['providerOptions'] = 0
         print("caught keyerror", error)
 
-    if session['procedureOptions']:
-        procedureOptions = session['procedureOptions']
-    else:
-        query = "SELECT procedureCode FROM procedures"
-        result = execute_query(db_connection, query)
-        row_headers = [x[0] for x in result.description]
-        row_variables = result.fetchall()
-        procedureOptions = []
-        for row_string in row_variables:
-            procedureOptions.append(row_string[0])
-
+    #Combobox information:
+    #Diagnosis Codes
     if session['diagnosisOptions']:
         diagnosisOptions = session['diagnosisOptions']
     else:
@@ -108,6 +206,30 @@ def providers():
         diagnosisOptions = []
         for row_string in row_variables:
             diagnosisOptions.append(row_string[0])
+        session['diagnosisOptions'] = diagnosisOptions
+    #Provider ID's
+    if session['providerOptions']:
+        providerOptions = session['providerOptions']
+    else:
+        query = "SELECT providerID FROM providers"
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall()
+        providerOptions = []
+        for row_string in row_variables:
+            providerOptions.append(row_string[0])
+        session['providerOptions'] = providerOptions
+    #Procedures IDs
+    if session['procedureOptions']:
+        procedureOptions = session['procedureOptions']
+    else:
+        query = "SELECT procedureCode FROM procedures"
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall()
+        procedureOptions = []
+        for row_string in row_variables:
+            procedureOptions.append(row_string[0])
 
     if session['patient_mrn']:
         patient_mrn = session['patient_mrn']
@@ -187,6 +309,7 @@ def providers():
             for row_string in row_variables:
                 json_data.append(dict(zip(row_headers, row_string)))
 
+            #save patient info to load into refreshed page
             providerPatientObj = json_data
             session['providerPatientObj'] = providerPatientObj
 
@@ -196,6 +319,7 @@ def providers():
 
             patient_mrn = session['patient_mrn']
 
+            #gather form information for SQL query
             patient_fname = request.form['fname']
             patient_lname = request.form['lname']
             patient_birthdate = request.form['birthdate']
@@ -207,7 +331,7 @@ def providers():
 
             execute_query(db_connection, query)
 
-            #clear the Update Patient Fields
+            #clear the Update Patient Fields in case user wants to update with a new patient
             session['providerPatientObj'] = {}
             providerPatientObj = {}
 
@@ -302,6 +426,8 @@ def providers():
             for row_string in row_variables:
                 json_data.append(dict(zip(row_headers, row_string)))
             visitData = json_data
+
+            #save for this session in case of further page refreshes
             session['visitData'] = visitData
 
         #View Patients of Provider = viewProviderPatients
@@ -321,12 +447,13 @@ def providers():
             for row_string in row_variables:
                 json_data.append(dict(zip(row_headers, row_string)))
             patientData = json_data
+
+            #save for this session in case of further page refreshes
             session['patientData'] = patientData
-            #return render_template('providers.html', patientData=patientData)
 
-        return render_template('providers.html', procedureOptions=procedureOptions, diagnosisOptions=diagnosisOptions, patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
+        return render_template('providers.html', providerOptions=providerOptions, procedureOptions=procedureOptions, diagnosisOptions=diagnosisOptions, patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
 
-    return render_template('providers.html')
+    return render_template('providers.html',  providerOptions=providerOptions, procedureOptions=procedureOptions, diagnosisOptions=diagnosisOptions, patientData=patientData, visitData = visitData, providerUpdateVisitObj = providerUpdateVisitObj, providerPatientObj=providerPatientObj)
 
 
 @webapp.route('/admin', methods=['GET', 'POST'])
