@@ -71,8 +71,11 @@
                     <form method='POST'>
                         <td>{{ row['medicalRecordNumber'] }}</td>
                         <td>{{ row['patientName'] }}</td>
-                        <td>{{ row['clinicName'] }}</td>
-                        <td><input type="submit" name="deletePatientClinicRelation" value="Delete"></td>
+                        <td><input type="text" name="updatePatientClinicRelationClinic" value="{{ row['clinicName'] }}"></td>
+                        <td>
+                            <input type="submit" name="deletePatientClinicRelation" value="Delete">
+                            <input type="submit" name="updatePatientClinicRelation" value="Update">
+                        </td>
                         <input type="hidden" name="deletePatientClinicRelationPatient" value="{{ row['medicalRecordNumber'] }}">
                         <input type="hidden" name="deletePatientClinicRelationClinic" value="{{ row['clinicID'] }}">
                     </form>
