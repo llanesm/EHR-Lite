@@ -62,7 +62,8 @@
             <tr>
                 <th>Account Number</th>
                 <th>Patient Name</th>
-                <th>Patient Clinic</th>
+                <th>Patient Clinic Name</th>
+                <th>Clinic ID</th>
                 <th>Delete Relation</th>
             </tr>
             {% if patientClinics %}
@@ -71,7 +72,22 @@
                     <form method='POST'>
                         <td>{{ row['medicalRecordNumber'] }}</td>
                         <td>{{ row['patientName'] }}</td>
-                        <td><input type="text" name="updatePatientClinicRelationClinic" value="{{ row['clinicName'] }}"></td>
+                        <td>{{ row['clinicName'] }}</td>
+                        {% if clinicOptions %}
+                        <td>
+                            <select id="updatePatientClinicRelationClinic" name="updatePatientClinicRelationClinic">
+                                {% for option in clinicOptions %}
+                                    {% if option == row['clinicID'] %}
+                                        <option value="{{ option }}" selected>{{ option }}</option>
+                                    {% else %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </td>
+                        {% else %}
+                            <td><input type="number" name="updatePatientClinicRelationClinic" value="{{ row['clinicID'] }}"></td>
+                        {% endif %}
                         <td>
                             <input type="submit" name="deletePatientClinicRelation" value="Delete">
                             <input type="submit" name="updatePatientClinicRelation" value="Update">

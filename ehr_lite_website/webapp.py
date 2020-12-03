@@ -28,6 +28,7 @@ def home():
     session['diagnosisOptions'] = 0
     session['procedureOptions'] = 0
     session["patientID"] = 0
+    session["clinicOptions"] = 0
 
     if request.method =='POST':
         print("REQUEST.FORM: ", request.form)
@@ -58,6 +59,27 @@ def home():
 def patient():
     #setup for connecting to our database
     db_connection = connect_to_database()
+
+    try:
+        session['providerOptions']
+        session["clinicOptions"]
+    except KeyError as error:
+        session['providerOptions'] = 0
+        session["clinicOptions"] = 0
+        print("caught keyerror", error)
+
+    #clinic options
+    if session["clinicOptions"]:
+        clinicOptions = session['clinicOptions']
+    else:
+        query = "SELECT clinicID FROM clinics"
+        result = execute_query(db_connection, query)
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall()
+        clinicOptions = []
+        for row_string in row_variables:
+            clinicOptions.append(row_string[0])
+        session['clinicOptions'] = clinicOptions
 
     #patientClinic information
     if session["patientID"]:
@@ -95,12 +117,6 @@ def patient():
         session['patientHistory'] = patientHistory
     else:
         patientHistory = None
-
-    try:
-        session['providerOptions']
-    except KeyError as error:
-        session['providerOptions'] = 0
-        print("caught keyerror", error)
 
 
     if session['providerOptions']:
@@ -142,7 +158,7 @@ def patient():
 
             execute_query(db_connection, query)
 
-            #delete from object here????
+            #do a refresh query to update the table as well
             query = """SELECT patients.medicalRecordNumber, CONCAT(patients.fname, ' ', patients.lname) AS 'patientName', clinics.clinicID, clinics.clinicName from patients
                         JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber
                         JOIN clinics ON clinics.clinicID = patientsClinics.clinicID
@@ -156,10 +172,46 @@ def patient():
             patientClinics = json_data
             session['patientClinics'] = patientClinics
 
-        return render_template('patient.html', patientClinics=patientClinics, providerOptions=providerOptions, patientHistory=patientHistory)
+        if 'updatePatientClinicRelation' in request.form:
+            print("UPDATING PATIENTCLINICS RELATION")
+
+            patient_mrn = request.form['deletePatientClinicRelationPatient']
+            clinicID = request.form['updatePatientClinicRelationClinic']
+            oldClinicID = request.form['deletePatientClinicRelationClinic']
+
+            preExistingRelation = False
+            #check for existing relationship, reject SQL
+            for row in session['patientClinics']:
+                print("row['clinicID']", row['clinicID'])
+                print("clinicID: ", clinicID)
+                if int(clinicID) == int(row['clinicID']):
+                    preExistingRelation = True
+                    print("REJECTING UPDATE <-------------------------------------")
+            if not preExistingRelation:
+                query = """UPDATE patientsClinics SET clinicID = {}
+                                WHERE patientsClinics.patientID={} AND patientsClinics.clinicID={}""".format(clinicID, patient_mrn, oldClinicID)
 
 
-    return render_template('patient.html', patientClinics=patientClinics, providerOptions=providerOptions, patientHistory=patientHistory)
+                execute_query(db_connection, query)
+
+                #do a refresh query to update the table as well
+                query = """SELECT patients.medicalRecordNumber, CONCAT(patients.fname, ' ', patients.lname) AS 'patientName', clinics.clinicID, clinics.clinicName from patients
+                            JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber
+                            JOIN clinics ON clinics.clinicID = patientsClinics.clinicID
+                            WHERE patients.medicalRecordNumber= {};""".format(session["patientID"])
+                result = execute_query(db_connection, query)
+                row_headers = [x[0] for x in result.description]
+                row_variables = result.fetchall() #be careful, this pop's the data as well
+                json_data = []
+                for row_string in row_variables:
+                    json_data.append(dict(zip(row_headers, row_string)))
+                patientClinics = json_data
+                session['patientClinics'] = patientClinics
+
+
+        return render_template('patient.html', clinicOptions=clinicOptions, patientClinics=patientClinics, providerOptions=providerOptions, patientHistory=patientHistory)
+
+    return render_template('patient.html', clinicOptions=clinicOptions, patientClinics=patientClinics, providerOptions=providerOptions, patientHistory=patientHistory)
 
 
 
