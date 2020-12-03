@@ -37,5 +37,9 @@ gunicorn run:webapp -b 0.0.0.0:XXXX -D
 ```bash
 ps ufx | grep gunicorn
 ```
+find the PID, then
+```bash
+kill [PID]
+```
 
 *Credit to knightsamar/CS340_starter_flask_app repo for initial webapp setup*
