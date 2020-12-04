@@ -75,3 +75,12 @@ table, th, td{
     display: flex;
     justify-content: space-evenly;
 }
+
+#providersViewVisits{
+    max-width: 10%;
+    table-layout: fixed;
+}
+
+.visitNotes{
+    max-width: 100px;
+}
