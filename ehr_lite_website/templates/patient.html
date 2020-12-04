@@ -15,7 +15,7 @@
             <input type="date" id="birthdate" name="newPatientBirthdate" value="2020-12-01">
             <label for="primaryCarePhysician">Primary Care Physician</label>
             {% if providerOptions %}
-            <label for="primaryCarePhysician">Primary Care Physician #</label>
+            <label for="primaryCarePhysician">Primary Care Physician</label>
             <select id="primaryCarePhysician" name="primaryCarePhysician">
                 {% for option in providerOptions %}
                     <option value="{{ option['providerID'] }}">{{ option['providerName'] }}</option>
@@ -63,7 +63,6 @@
                 <th>Account Number</th>
                 <th>Patient Name</th>
                 <th>Patient Clinic Name</th>
-                <th>Clinic ID</th>
                 <th>Delete Relation</th>
             </tr>
             {% if patientClinics %}
@@ -72,15 +71,14 @@
                     <form method='POST'>
                         <td>{{ row['medicalRecordNumber'] }}</td>
                         <td>{{ row['patientName'] }}</td>
-                        <td>{{ row['clinicName'] }}</td>
                         {% if clinicOptions %}
                         <td>
                             <select id="updatePatientClinicRelationClinic" name="updatePatientClinicRelationClinic">
                                 {% for option in clinicOptions %}
-                                    {% if option == row['clinicID'] %}
-                                        <option value="{{ option }}" selected>{{ option }}</option>
+                                    {% if option['clinicID'] == row['clinicID'] %}
+                                        <option value="{{ option['clinicID'] }}" selected>{{ option['clinicName'] }}</option>
                                     {% else %}
-                                        <option value="{{ option }}">{{ option }}</option>
+                                        <option value="{{ option['clinicID'] }}">{{ option['clinicName'] }}</option>
                                     {% endif %}
                                 {% endfor %}
                             </select>
