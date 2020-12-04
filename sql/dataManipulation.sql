@@ -27,16 +27,26 @@ INSERT INTO visits (visitDate, chiefComplaint, diagnosisCode, procedureCode, pat
 --------------------------------------------------------------------------------
 -- Selects --
 
---patients, Select by medicalRecordNumber
+--patients, Select by medicalRecordNumber, Updated (v2)
 --Query for selecting the medical history of the current patient based on their
 --    medicalRecordNumber(PK). '$medicalRecordNumber' used to denote passed variable
 --    from backend Python code representing medicalRecordNumber from patient portal
 --    Example: $medicalRecordNumber = 1
-SELECT patients.medicalRecordNumber, visits.visitDate, visits.chiefComplaint, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', visits.diagnosisCode, visits.procedureCode, clinics.clinicID, visits.providerNotes FROM visits
-    JOIN patients ON patients.medicalRecordNumber = visits.patient
-    JOIN clinics  ON clinics.clinicID = visits.clinic
-    JOIN providers ON providers.providerID = visits.provider
-    WHERE patients.medicalRecordNumber = $medicalRecordNumber;
+SELECT patients.medicalRecordNumber, visits.visitDate, visits.chiefComplaint, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', diagnoses.diagnosisName, procedures.procedureName, clinics.clinicName, visits.providerNotes FROM visits
+        JOIN patients ON patients.medicalRecordNumber = visits.patient
+        JOIN clinics  ON clinics.clinicID = visits.clinic
+        JOIN providers ON providers.providerID = visits.provider
+        JOIN diagnoses ON diagnoses.diagnosisCode = visits.diagnosisCode
+        JOIN procedures ON procedures.procedureCode = visits.procedureCode
+        WHERE patients.medicalRecordNumber = $medicalRecordNumber;
+--providers version, select by visit date, view medical history of a patient
+SELECT visits.accountNumber, CONCAT(patients.fname, ' ', patients.lname) AS patient, visits.chiefComplaint, clinics.clinicName, diagnoses.diagnosisName, procedures.procedureName, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', visits.providerNotes FROM visits
+                        JOIN patients ON patients.medicalRecordNumber = visits.patient
+                        JOIN clinics  ON clinics.clinicID = visits.clinic
+                        LEFT JOIN diagnoses ON diagnoses.diagnosisCode = visits.diagnosisCode
+                        JOIN procedures ON procedures.procedureCode = visits.procedureCode
+                        JOIN providers ON providers.providerID = visits.provider
+                        WHERE visits.visitDate = $visitDate;
 
 --visit, Select by date
 --Query for selecting all visits in the system based on the date given. $visitDate used
@@ -59,16 +69,8 @@ SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.bi
     JOIN providers ON providers.providerID = patients.primaryCarePhysician
     WHERE providers.providerID = $providerID;
 
---clinics, Select by clinicID
---Query1 (using Visits) for selecting all patients of a chosen clinic based on the clinic's id number.
---  $clinicID used to denote passed variable from backend Python code representing the
---  clinic's unique id from admin portal
---  Example: $clinicID = 1
-SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.birthdate FROM patients
-    JOIN visits ON visits.patient = patients.medicalRecordNumber
-    JOIN clinics ON clinics.clinicID = visits.clinic
-    WHERE clinics.clinicID = $clinicID;
---Query2 (Using patientsClinics) for selecting all patients of a chosen clinic based on the clinic's id number.
+--clinics, Select by clinicID and MedicalRecordNumber
+--Query (Using M:M patientsClinics) for selecting all patients of a chosen clinic based on the clinic's id number.
 --  $clinicID used to denote passed variable from backend Python code representing the
 --  clinic's unique id from admin portal
 --  Example: $clinicID = 1
@@ -86,6 +88,35 @@ SELECT providers.providerID, providers.fname, providers.lname, providers.license
     JOIN providersClinics ON providersClinics.providerID = providers.providerID
     WHERE providersClinics.clinicID = $clinicID;
 
+--Query for selecting all clinic ID's to populate dropdown boxes
+SELECT clinicID FROM clinics
+
+--Query for selecting all provider ID's to populate dropdown boxes
+SELECT providerID FROM providers
+
+--Query for selecting all procedureOptions to populate dropdown boxes
+SELECT procedureCode FROM procedures
+
+--Query for selecting all diagnosisCodes to populate dropdown boxes
+SELECT diagnosisCode FROM diagnoses
+
+
+--providers
+--Query for selecting a patients records for the providers page
+SELECT medicalRecordNumber, fname, lname, birthdate, primaryCarePhysician, preferredPharmacy FROM patients
+    WHERE medicalRecordNumber = $medicalRecordNumber
+
+--patients
+--Query for patients to see all clinics that they are assigned to based on their unique medicalRecordNumber
+SELECT patients.medicalRecordNumber, CONCAT(patients.fname, ' ', patients.lname) AS 'patientName', clinics.clinicID, clinics.clinicName FROM patients
+    JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber
+    JOIN clinics ON clinics.clinicID = patientsClinics.clinicID
+    WHERE patients.medicalRecordNumber = $medicalRecordNumber
+
+--providers
+--Query for selecting visit information based on its unique accountNumber, from the providers page
+SELECT visitDate, chiefComplaint, diagnosisCode, procedureCode, patient, clinic, provider, providerNotes  FROM visits
+    WHERE accountNumber = $accountNumber
 --------------------------------------------------------------------------------
 -- Deletes --
 
@@ -110,7 +141,6 @@ DELETE FROM visits WHERE accountNumber = $accountNumber;
 --  Example: $providerID = 1
 DELETE FROM providers WHERE providerID = $providerID;
 
---TODO:
 --clinics, Select by clinicID
 --Query for deleting a clinic from the system based on its unique clinicID.
 --  Will follow ON DELETE CASCADE referential action. $clinicID used to
@@ -118,6 +148,9 @@ DELETE FROM providers WHERE providerID = $providerID;
 --  Example: $providerID = 1
 DELETE FROM clinics WHERE clinicID = $providerID;
 
+--M:M relationship Delete
+--Query for disassociating a patient from a clinic (relationshipo)
+DELETE FROM patientsClinics WHERE patientsClinics.patientID=$patientID AND patientsClinics.clinicID=$clinicID
 --------------------------------------------------------------------------------
 -- Updates --
 
@@ -148,3 +181,10 @@ UPDATE providers SET lname = $fname, licenseType = $licenseType, licenseNumber =
 --  input in the relavent fields.
 UPDATE clinics SET specialty = $specialty, providerCapacity = $providerCapacity, examRooms = $examRooms, primaryCare = $primaryCare
     WHERE clinicID = $clinicID;
+
+
+--M:M relationship query, updates a patients relationship with a clinic with a different clinic
+-- $clinicID1 = new clinic relation
+-- $clinicID2 = old clinic relation
+UPDATE patientsClinics SET clinicID = $clinicID1
+    WHERE patientsClinics.patientID= $patientID AND patientsClinics.clinicID= $clinicID2

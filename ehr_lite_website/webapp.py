@@ -350,7 +350,6 @@ def providers():
             patient_mrn = request.form['patientID']
             session['patient_mrn'] = patient_mrn
 
-            #this query was not in dataManipulation.sql
             query = """SELECT medicalRecordNumber, fname, lname, birthdate, primaryCarePhysician, preferredPharmacy FROM patients
                             WHERE medicalRecordNumber = {};""".format(patient_mrn)
             result = execute_query(db_connection, query)
@@ -462,7 +461,6 @@ def providers():
             print("VIEWING VISITS")
             visit_date = request.form['visitDate']
 
-            #modified this SQL from dataManipulation.sql
             query = """SELECT visits.accountNumber, CONCAT(patients.fname, ' ', patients.lname) AS patient, visits.chiefComplaint, clinics.clinicName, diagnoses.diagnosisName, procedures.procedureName, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', visits.providerNotes FROM visits
                         JOIN patients ON patients.medicalRecordNumber = visits.patient
                         JOIN clinics  ON clinics.clinicID = visits.clinic
