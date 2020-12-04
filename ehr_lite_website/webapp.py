@@ -69,17 +69,17 @@ def patient():
         session["clinicOptions"] = 0
         print("caught keyerror", error)
 
-    #clinic options
     if session["clinicOptions"]:
         clinicOptions = session['clinicOptions']
     else:
-        query = "SELECT clinicID FROM clinics"
+        query = "SELECT clinicID, clinicName FROM clinics"
         result = execute_query(db_connection, query)
         row_headers = [x[0] for x in result.description]
         row_variables = result.fetchall()
-        clinicOptions = []
+        json_data = []
         for row_string in row_variables:
-            clinicOptions.append(row_string[0])
+            json_data.append(dict(zip(row_headers, row_string)))
+        clinicOptions = json_data
         session['clinicOptions'] = clinicOptions
 
     #patientClinic information
