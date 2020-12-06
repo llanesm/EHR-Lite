@@ -89,10 +89,10 @@ SELECT providers.providerID, providers.fname, providers.lname, providers.license
     WHERE providersClinics.clinicID = $clinicID;
 
 --Query for selecting all clinic ID's to populate dropdown boxes
-SELECT clinicID FROM clinics
+SELECT clinicID, clinicName FROM clinics
 
 --Query for selecting all provider ID's to populate dropdown boxes
-SELECT providerID FROM providers
+SELECT providerID, CONCAT(fname, ' ', lname) AS 'providerName' FROM providers
 
 --Query for selecting all procedureOptions to populate dropdown boxes
 SELECT procedureCode FROM procedures
