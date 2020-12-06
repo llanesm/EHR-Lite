@@ -461,6 +461,7 @@ def providers():
 
             providerUpdateVisitObj = json_data
             session['providerUpdateVisitObj'] = providerUpdateVisitObj
+            print("providerUpdateVisitObj: ", providerUpdateVisitObj)
 
         #Update Visit Information = providersUpdateVisit
         elif 'providersUpdateVisit' in request.form:

@@ -77,10 +77,10 @@ table, th, td{
 }
 
 #providersViewVisits{
-    max-width: 40%;
+    max-width: 25%;
     table-layout: fixed;
 }
 
 .visitNotes{
-    max-width: 200px;
+    max-width: 250px;
 }
