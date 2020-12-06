@@ -108,7 +108,7 @@ DELETE FROM visits WHERE accountNumber = $accountNumber;
 --  Will follow ON DELETE CASCADE referential action. $providerID used to
 --  denote passed from backend Python representing user input from admin portal.
 --  Example: $providerID = 1
-DELETE FROM providers WHERE providerID = $providerID;
+DELETE FROM providers WHERE fname = $fname AND lname = $lname;
 
 --TODO:
 --clinics, Select by clinicID
@@ -116,7 +116,7 @@ DELETE FROM providers WHERE providerID = $providerID;
 --  Will follow ON DELETE CASCADE referential action. $clinicID used to
 --  denote passed from backend Python representing user input from admin portal.
 --  Example: $providerID = 1
-DELETE FROM clinics WHERE clinicID = $providerID;
+DELETE FROM clinics WHERE clinicName = $clinicName;
 
 --------------------------------------------------------------------------------
 -- Updates --
