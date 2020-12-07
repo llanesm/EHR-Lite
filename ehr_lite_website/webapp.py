@@ -30,7 +30,7 @@ def home():
     session["patientID"] = 0
     session["clinicOptions"] = 0
 
-    session['adminClinicDataToDisplayOnPage'] = 0
+    session['adminClinicData'] = 0
     session['adminProviderData'] = 0
     session['adminPatientData'] = 0
     session['provider_id'] = 0
@@ -522,7 +522,7 @@ def admin():
     db_connection = connect_to_database()
 
     try:
-        session['adminClinicDataToDisplayOnPage']
+        session['adminClinicData']
         session['adminPatientData']
         session['adminProviderData']
         session['provider_id']
@@ -530,7 +530,7 @@ def admin():
         session['clinic_id']
         session['adminClinicObj']
     except KeyError as error:
-        session['adminClinicDataToDisplayOnPage'] = 0
+        session['adminClinicData'] = 0
         session['adminPatientData'] = 0
         session['adminProviderData'] = 0
         session['provider_id'] = 0
@@ -570,35 +570,41 @@ def admin():
     else:
         adminClinicObj = {}
 
-    if session['adminClinicDataToDisplayOnPage']:
-        adminClinicDataToDisplayOnPage = session['adminClinicDataToDisplayOnPage']
+    if session['adminClinicData']:
+        adminClinicData = session['adminClinicData']
     else:
-        # Populate clinics table
-        query = """SELECT * from clinics"""
+        adminClinicData = {}
 
-        result = execute_query(db_connection, query)
-
-        row_headers = [x[0] for x in result.description]
-        row_variables = result.fetchall()
-        json_data = []
-        for row_string in row_variables:
-            json_data.append(dict(zip(row_headers, row_string)))
-        adminClinicDataToDisplayOnPage = json_data
-        session['adminClinicDataToDisplayOnPage'] = adminClinicDataToDisplayOnPage
-
-        # display true or false on table vs 1 or 0
-        for row in adminClinicDataToDisplayOnPage:
-            if row['primaryCare'] == 1:
-                row['primaryCare'] = True
-            else:
-                row['primaryCare'] = False
-
-    session['adminClinicDataToDisplayOnPage'] = adminClinicDataToDisplayOnPage
-
+    # Handles all button presses
     if request.method == 'POST':
 
+        # Populate clinics table
+        if 'viewUpdateClinicTable' in request.form:
+            print('LOOKING UP CLINICS')
+
+            query = """SELECT * from clinics"""
+
+            result = execute_query(db_connection, query)
+
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall()
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+            adminClinicData = json_data
+            session['adminClinicData'] = adminClinicData
+
+            # display true or false on table vs 1 or 0
+            for row in adminClinicData:
+                if row['primaryCare'] == 1:
+                    row['primaryCare'] = True
+                else:
+                    row['primaryCare'] = False
+
+            session['adminClinicData'] = adminClinicData
+
         # Add new provider
-        if 'adminNewProvider' in request.form:
+        elif 'adminNewProvider' in request.form:
             print('ADDING NEW PROVIDER')
 
             fname = request.form['fname']
@@ -630,6 +636,28 @@ def admin():
                     """.format(name, specialty, providerCapacity, examRooms, primaryCare)
             execute_query(db_connection, query)
 
+            # Update clinic table view
+            query = """SELECT * from clinics"""
+
+            result = execute_query(db_connection, query)
+
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall()
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+            adminClinicData = json_data
+            session['adminClinicData'] = adminClinicData
+
+            # display true or false on table vs 1 or 0
+            for row in adminClinicData:
+                if row['primaryCare'] == 1:
+                    row['primaryCare'] = True
+                else:
+                    row['primaryCare'] = False
+
+            session['adminClinicData'] = adminClinicData
+
         # Remove provider from health system
         elif 'adminDeleteProviderFromSystem' in request.form:
             print('REMOVING PROVIDER FROM SYSTEM')
@@ -650,6 +678,28 @@ def admin():
             query = """DELETE FROM clinics WHERE clinicName = '{}';""".format(clinic_name)
 
             execute_query(db_connection, query)
+
+            # Update clinic table view
+            query = """SELECT * from clinics"""
+
+            result = execute_query(db_connection, query)
+
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall()
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+            adminClinicData = json_data
+            session['adminClinicData'] = adminClinicData
+
+            # display true or false on table vs 1 or 0
+            for row in adminClinicData:
+                if row['primaryCare'] == 1:
+                    row['primaryCare'] = True
+                else:
+                    row['primaryCare'] = False
+
+            session['adminClinicData'] = adminClinicData
 
         # Lookup provider to update
         elif 'adminLookupProvider' in request.form:
@@ -748,6 +798,28 @@ def admin():
             session['adminClinicObj'] = {}
             adminClinicObj = {}
 
+            # Update clinic table view
+            query = """SELECT * from clinics"""
+
+            result = execute_query(db_connection, query)
+
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall()
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+            adminClinicData = json_data
+            session['adminClinicData'] = adminClinicData
+
+            # display true or false on table vs 1 or 0
+            for row in adminClinicData:
+                if row['primaryCare'] == 1:
+                    row['primaryCare'] = True
+                else:
+                    row['primaryCare'] = False
+
+            session['adminClinicData'] = adminClinicData
+
         # Insert procedure
         elif 'adminNewProcedure' in request.form:
             print('ADDING NEW PROCEDURE')
@@ -828,9 +900,9 @@ def admin():
 
             session['adminProviderData'] = adminProviderData
 
-        return render_template('admin.html', adminPatientData=adminPatientData, adminProviderData=adminProviderData,
-                               provider_id=provider_id, adminProviderObj=adminProviderObj, clinic_id=clinic_id,
-                               adminClinicObj=adminClinicObj, adminClinicDataToDisplayOnPage=adminClinicDataToDisplayOnPage)
+        return render_template('admin.html', adminClinicData=adminClinicData, adminPatientData=adminPatientData,
+                               adminProviderData=adminProviderData, provider_id=provider_id,
+                               adminProviderObj=adminProviderObj, clinic_id=clinic_id, adminClinicObj=adminClinicObj)
 
     return render_template('admin.html')
 

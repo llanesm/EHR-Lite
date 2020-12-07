@@ -158,9 +158,14 @@
     </div>
 </div>
 
-<div id="clincTable">
-    <h3>Health System Clinics</h3>
-    <table>
+<div id="clinicTable">
+    <div class="recordsbox">
+        <h3>Health System Clinics</h3>
+        <form method="POST">
+            <input type="submit" name="viewUpdateClinicTable" value="View Clinics">
+        </form>
+        {% if adminClinicData %}
+        <table>
         <tr>
             <th>Clinic ID</th>
             <th>Clinic Name</th>
@@ -169,7 +174,7 @@
             <th>Exam Rooms</th>
             <th>Primary Care</th>
         </tr>
-        {% for row in adminClinicDataToDisplayOnPage %}
+        {% for row in adminClinicData %}
         <tr>
             <td>{{ row['clinicID'] }}</td>
             <td>{{ row['clinicName'] }}</td>
@@ -179,7 +184,9 @@
             <td>{{ row['primaryCare'] }}</td>
         </tr>
         {% endfor %}
-    </table>
+        </table>
+        {% endif %}
+    </div>
 </div>
 
 <div id="adminTables">
