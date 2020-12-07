@@ -127,19 +127,16 @@ def patient():
     else:
         patientHistory = None
 
-
-    if session['providerOptions']:
-        providerOptions = session['providerOptions']
-    else:
-        query = "SELECT providerID, CONCAT(fname, ' ', lname) AS 'providerName' FROM providers"
-        result = execute_query(db_connection, query)
-        row_headers = [x[0] for x in result.description]
-        row_variables = result.fetchall()
-        json_data = []
-        for row_string in row_variables:
-            json_data.append(dict(zip(row_headers, row_string)))
-        providerOptions = json_data
-        session['providerOptions'] = providerOptions
+    #Provider Options:
+    query = "SELECT providerID, CONCAT(fname, ' ', lname) AS 'providerName' FROM providers"
+    result = execute_query(db_connection, query)
+    row_headers = [x[0] for x in result.description]
+    row_variables = result.fetchall()
+    json_data = []
+    for row_string in row_variables:
+        json_data.append(dict(zip(row_headers, row_string)))
+    providerOptions = json_data
+    session['providerOptions'] = providerOptions
 
     if request.method =='POST':
         #Accessing Patient Information in Providers Portal
@@ -231,7 +228,6 @@ def providers():
     #setup for connecting to our database
     db_connection = connect_to_database()
 
-
     try:
         session['visitData']
         session['patientData']
@@ -258,74 +254,59 @@ def providers():
         session["clinicOptions"] = 0
         print("caught keyerror", error)
 
-    #Combobox information:
+    #Dynamic Combobox information:
     #Clinic Options
-    #clinic options
-    if session["clinicOptions"]:
-        clinicOptions = session['clinicOptions']
-    else:
-        query = "SELECT clinicID, clinicName FROM clinics"
-        result = execute_query(db_connection, query)
-        row_headers = [x[0] for x in result.description]
-        row_variables = result.fetchall()
-        json_data = []
-        for row_string in row_variables:
-            json_data.append(dict(zip(row_headers, row_string)))
-        clinicOptions = json_data
-        session['clinicOptions'] = clinicOptions
+    query = "SELECT clinicID, clinicName FROM clinics"
+    result = execute_query(db_connection, query)
+    row_headers = [x[0] for x in result.description]
+    row_variables = result.fetchall()
+    json_data = []
+    for row_string in row_variables:
+        json_data.append(dict(zip(row_headers, row_string)))
+    clinicOptions = json_data
+    session['clinicOptions'] = clinicOptions
 
     #Diagnosis Codes
-    if session['diagnosisOptions']:
-        diagnosisOptions = session['diagnosisOptions']
-    else:
-        query = "SELECT diagnosisCode FROM diagnoses"
-        result = execute_query(db_connection, query)
-        row_headers = [x[0] for x in result.description]
-        row_variables = result.fetchall()
-        diagnosisOptions = []
-        for row_string in row_variables:
-            diagnosisOptions.append(row_string[0])
-        session['diagnosisOptions'] = diagnosisOptions
+    query = "SELECT diagnosisCode FROM diagnoses"
+    result = execute_query(db_connection, query)
+    row_headers = [x[0] for x in result.description]
+    row_variables = result.fetchall()
+    diagnosisOptions = []
+    for row_string in row_variables:
+        diagnosisOptions.append(row_string[0])
+    session['diagnosisOptions'] = diagnosisOptions
 
     #Provider ID's and names
-    if session['providerOptions']:
-        providerOptions = session['providerOptions']
-    else:
-        query = "SELECT providerID, CONCAT(fname, ' ', lname) AS 'providerName' FROM providers"
-        result = execute_query(db_connection, query)
-        row_headers = [x[0] for x in result.description]
-        row_variables = result.fetchall()
-        json_data = []
-        for row_string in row_variables:
-            json_data.append(dict(zip(row_headers, row_string)))
-        providerOptions = json_data
-        session['providerOptions'] = providerOptions
+    query = "SELECT providerID, CONCAT(fname, ' ', lname) AS 'providerName' FROM providers"
+    result = execute_query(db_connection, query)
+    row_headers = [x[0] for x in result.description]
+    row_variables = result.fetchall()
+    json_data = []
+    for row_string in row_variables:
+        json_data.append(dict(zip(row_headers, row_string)))
+    providerOptions = json_data
+    session['providerOptions'] = providerOptions
 
     #Patient ID's and names
-    if session['patientOptions']:
-        patientOptions = session['patientOptions']
-    else:
-        query = "SELECT medicalRecordNumber, CONCAT(fname, ' ', lname) AS 'patientName' FROM patients"
-        result = execute_query(db_connection, query)
-        row_headers = [x[0] for x in result.description]
-        row_variables = result.fetchall()
-        json_data = []
-        for row_string in row_variables:
-            json_data.append(dict(zip(row_headers, row_string)))
-        patientOptions = json_data
-        session['patientOptions'] = patientOptions
+    query = "SELECT medicalRecordNumber, CONCAT(fname, ' ', lname) AS 'patientName' FROM patients"
+    result = execute_query(db_connection, query)
+    row_headers = [x[0] for x in result.description]
+    row_variables = result.fetchall()
+    json_data = []
+    for row_string in row_variables:
+        json_data.append(dict(zip(row_headers, row_string)))
+    patientOptions = json_data
+    session['patientOptions'] = patientOptions
 
     #Procedures IDs
-    if session['procedureOptions']:
-        procedureOptions = session['procedureOptions']
-    else:
-        query = "SELECT procedureCode FROM procedures"
-        result = execute_query(db_connection, query)
-        row_headers = [x[0] for x in result.description]
-        row_variables = result.fetchall()
-        procedureOptions = []
-        for row_string in row_variables:
-            procedureOptions.append(row_string[0])
+    query = "SELECT procedureCode FROM procedures"
+    result = execute_query(db_connection, query)
+    row_headers = [x[0] for x in result.description]
+    row_variables = result.fetchall()
+    procedureOptions = []
+    for row_string in row_variables:
+        procedureOptions.append(row_string[0])
+    session['procedureOptions'] = procedureOptions
 
     if session['patient_mrn']:
         patient_mrn = session['patient_mrn']
@@ -379,7 +360,7 @@ def providers():
         #Discharge Patient = providerDischargePatient
         elif 'providerDischargePatient' in request.form:
             print("DELETEING PATIENT INFO")
-            print("patient_mrn: ", request.form['medicalRecordNumber'])
+
             patient_mrn = request.form['medicalRecordNumber']
 
             query = """DELETE FROM patients WHERE medicalRecordNumber = {};""".format(patient_mrn)
@@ -469,7 +450,6 @@ def providers():
 
             providerUpdateVisitObj = json_data
             session['providerUpdateVisitObj'] = providerUpdateVisitObj
-            print("providerUpdateVisitObj: ", providerUpdateVisitObj)
 
         #Update Visit Information = providersUpdateVisit
         elif 'providersUpdateVisit' in request.form:
@@ -504,7 +484,6 @@ def providers():
         #View Visists by Date = viewVisits
         elif 'providersViewVisits' in request.form:
             print("VIEWING VISITS")
-            #visit_date = request.form['visitDate']
 
             query = """SELECT visits.accountNumber, CONCAT(patients.fname, ' ', patients.lname) AS patient, visits.chiefComplaint, clinics.clinicName, diagnoses.diagnosisName, procedures.procedureName, CONCAT(providers.fname, ' ', providers.lname) AS 'PCP', visits.providerNotes FROM visits
                         JOIN patients ON patients.medicalRecordNumber = visits.patient
@@ -512,7 +491,6 @@ def providers():
                         LEFT JOIN diagnoses ON diagnoses.diagnosisCode = visits.diagnosisCode
                         JOIN procedures ON procedures.procedureCode = visits.procedureCode
                         JOIN providers ON providers.providerID = visits.provider;"""
-                        #WHERE visits.visitDate = '{}';""".format(visit_date)
             result = execute_query(db_connection, query)
 
             row_headers = [x[0] for x in result.description]
@@ -649,7 +627,7 @@ def admin():
             specialty = request.form['specialty']
             primary_care = request.form['primaryCare']
 
-            query = """INSERT INTO providers (fname, lname, licenseType, licenseNumber, specialty, primaryCare) 
+            query = """INSERT INTO providers (fname, lname, licenseType, licenseNumber, specialty, primaryCare)
                 VALUES ('{}', '{}', '{}', {}, '{}', {});
                 """.format(fname, lname, license_type, license_number, specialty, primary_care)
 
@@ -775,7 +753,7 @@ def admin():
             specialty = request.form['specialty']
             primary_care = request.form['primaryCare']
 
-            query = """UPDATE providers SET fname = '{}', lname = '{}', licenseType = '{}', licenseNumber = {}, 
+            query = """UPDATE providers SET fname = '{}', lname = '{}', licenseType = '{}', licenseNumber = {},
                     specialty = '{}', primaryCare = {} WHERE providerID = {};
                     """.format(fname, lname, license_type, license_number, specialty, primary_care, provider_id)
 
@@ -795,7 +773,7 @@ def admin():
                 clinic_id = 0
             session['clinic_id'] = clinic_id
 
-            query = """SELECT clinicName, specialty, providerCapacity, examRooms, primaryCare 
+            query = """SELECT clinicName, specialty, providerCapacity, examRooms, primaryCare
                         FROM clinics WHERE clinicID = {};""".format(clinic_id)
             result = execute_query(db_connection, query)
 
@@ -823,7 +801,7 @@ def admin():
             exam_rooms = request.form['examRooms']
             primary_care = request.form['primaryCare']
 
-            query = """UPDATE clinics SET clinicName = '{}', specialty = '{}', providerCapacity = {}, 
+            query = """UPDATE clinics SET clinicName = '{}', specialty = '{}', providerCapacity = {},
                         examRooms = {}, primaryCare = {} WHERE clinicID = {};
                         """.format(clinic_name, specialty, provider_capacity, exam_rooms, primary_care, clinic_id)
 
@@ -862,7 +840,7 @@ def admin():
             procedure_code = request.form['procedureCode']
             procedure_name = request.form['procedureName']
 
-            query = """INSERT INTO procedures (procedureCode, procedureName) 
+            query = """INSERT INTO procedures (procedureCode, procedureName)
                         VALUES ('{}', '{}');""".format(procedure_code, procedure_name)
 
             execute_query(db_connection, query)
@@ -874,7 +852,7 @@ def admin():
             diagnosis_code = request.form['diagnosisCode']
             diagnosis_name = request.form['diagnosisName']
 
-            query = """INSERT INTO diagnoses (diagnosisCode, diagnosisName) 
+            query = """INSERT INTO diagnoses (diagnosisCode, diagnosisName)
                         VALUES ('{}', '{}');""".format(diagnosis_code, diagnosis_name)
 
             execute_query(db_connection, query)
@@ -888,10 +866,10 @@ def admin():
             else:
                 patientsClinicID = 0
 
-            query = """SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.birthdate, 
-                        patients.primaryCarePhysician, patients.preferredPharmacy FROM patients 
-                        JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber 
-                        JOIN clinics ON clinics.clinicID = patientsClinics.clinicID 
+            query = """SELECT patients.medicalRecordNumber, patients.fname, patients.lname, patients.birthdate,
+                        patients.primaryCarePhysician, patients.preferredPharmacy FROM patients
+                        JOIN patientsClinics ON patientsClinics.patientID = patients.medicalRecordNumber
+                        JOIN clinics ON clinics.clinicID = patientsClinics.clinicID
                         WHERE clinics.clinicID = {};""".format(patientsClinicID)
             result = execute_query(db_connection, query)
 
