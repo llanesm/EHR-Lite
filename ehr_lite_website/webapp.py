@@ -362,10 +362,10 @@ def providers():
             print("DELETEING PATIENT INFO")
 
             patient_mrn = request.form['medicalRecordNumber']
+            if patient_mrn:
+                query = """DELETE FROM patients WHERE medicalRecordNumber = {};""".format(patient_mrn)
 
-            query = """DELETE FROM patients WHERE medicalRecordNumber = {};""".format(patient_mrn)
-
-            execute_query(db_connection, query)
+                execute_query(db_connection, query)
 
         #Enter ID of Patient to update = providerLookupPatient
         elif 'providerLookupPatient' in request.form:
@@ -373,21 +373,23 @@ def providers():
 
             #save patient id for update query form
             patient_mrn = request.form['patientID']
-            session['patient_mrn'] = patient_mrn
 
-            query = """SELECT medicalRecordNumber, fname, lname, birthdate, primaryCarePhysician, preferredPharmacy FROM patients
-                            WHERE medicalRecordNumber = {};""".format(patient_mrn)
-            result = execute_query(db_connection, query)
+            if patient_mrn:
+                session['patient_mrn'] = patient_mrn
 
-            row_headers = [x[0] for x in result.description]
-            row_variables = result.fetchall() #be careful, this pop's the data as well
-            json_data = []
-            for row_string in row_variables:
-                json_data.append(dict(zip(row_headers, row_string)))
+                query = """SELECT medicalRecordNumber, fname, lname, birthdate, primaryCarePhysician, preferredPharmacy FROM patients
+                                WHERE medicalRecordNumber = {};""".format(patient_mrn)
+                result = execute_query(db_connection, query)
 
-            #save patient info to load into refreshed page
-            providerPatientObj = json_data
-            session['providerPatientObj'] = providerPatientObj
+                row_headers = [x[0] for x in result.description]
+                row_variables = result.fetchall() #be careful, this pop's the data as well
+                json_data = []
+                for row_string in row_variables:
+                    json_data.append(dict(zip(row_headers, row_string)))
+
+                #save patient info to load into refreshed page
+                providerPatientObj = json_data
+                session['providerPatientObj'] = providerPatientObj
 
         #Update Patient Information = providerUpdatePatient
         elif 'providerUpdatePatient' in request.form:
@@ -395,21 +397,22 @@ def providers():
 
             patient_mrn = session['patient_mrn']
 
-            #gather form information for SQL query
-            patient_fname = request.form['fname']
-            patient_lname = request.form['lname']
-            patient_birthdate = request.form['birthdate']
-            patient_pcp_num = request.form['primaryCarePhysicianNum']
-            patient_pharamcy = request.form['preferredPharmacy']
+            if patient_mrn:
+                #gather form information for SQL query
+                patient_fname = request.form['fname']
+                patient_lname = request.form['lname']
+                patient_birthdate = request.form['birthdate']
+                patient_pcp_num = request.form['primaryCarePhysicianNum']
+                patient_pharamcy = request.form['preferredPharmacy']
 
-            query = """UPDATE patients SET fname = '{}', lname = '{}', birthdate = '{}', primaryCarePhysician = {}, preferredPharmacy = '{}'
-                            WHERE medicalRecordNumber = {};""".format(patient_fname, patient_lname, patient_birthdate, patient_pcp_num, patient_pharamcy, patient_mrn)
+                query = """UPDATE patients SET fname = '{}', lname = '{}', birthdate = '{}', primaryCarePhysician = {}, preferredPharmacy = '{}'
+                                WHERE medicalRecordNumber = {};""".format(patient_fname, patient_lname, patient_birthdate, patient_pcp_num, patient_pharamcy, patient_mrn)
 
-            execute_query(db_connection, query)
+                execute_query(db_connection, query)
 
-            #clear the Update Patient Fields in case user wants to update with a new patient
-            session['providerPatientObj'] = {}
-            providerPatientObj = {}
+                #clear the Update Patient Fields in case user wants to update with a new patient
+                session['providerPatientObj'] = {}
+                providerPatientObj = {}
 
         # Access Visit Information in Providers Portal
         #New Visit = providersNewVisit
@@ -436,20 +439,22 @@ def providers():
 
             #save visit id for update query form
             visit_id = request.form['accountNumber']
-            session['providerUpdateVisitID'] = visit_id
 
-            query = """SELECT visitDate, chiefComplaint, diagnosisCode, procedureCode, patient, clinic, provider, providerNotes  FROM visits
-                        WHERE accountNumber = {};""".format(visit_id)
-            result = execute_query(db_connection, query)
+            if visit_id:
+                session['providerUpdateVisitID'] = visit_id
 
-            row_headers = [x[0] for x in result.description]
-            row_variables = result.fetchall() #be careful, this pop's the data as well
-            json_data = []
-            for row_string in row_variables:
-                json_data.append(dict(zip(row_headers, row_string)))
+                query = """SELECT visitDate, chiefComplaint, diagnosisCode, procedureCode, patient, clinic, provider, providerNotes  FROM visits
+                            WHERE accountNumber = {};""".format(visit_id)
+                result = execute_query(db_connection, query)
 
-            providerUpdateVisitObj = json_data
-            session['providerUpdateVisitObj'] = providerUpdateVisitObj
+                row_headers = [x[0] for x in result.description]
+                row_variables = result.fetchall() #be careful, this pop's the data as well
+                json_data = []
+                for row_string in row_variables:
+                    json_data.append(dict(zip(row_headers, row_string)))
+
+                providerUpdateVisitObj = json_data
+                session['providerUpdateVisitObj'] = providerUpdateVisitObj
 
         #Update Visit Information = providersUpdateVisit
         elif 'providersUpdateVisit' in request.form:
@@ -478,8 +483,9 @@ def providers():
             print("DELETING VISIT")
             visit_id = request.form['accountNumber']
 
-            query = """DELETE FROM visits WHERE accountNumber = {};""".format(visit_id)
-            execute_query(db_connection, query)
+            if visit_id:
+                query = """DELETE FROM visits WHERE accountNumber = {};""".format(visit_id)
+                execute_query(db_connection, query)
 
         #View Visists by Date = viewVisits
         elif 'providersViewVisits' in request.form:
