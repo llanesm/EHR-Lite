@@ -88,6 +88,7 @@ SELECT providers.providerID, providers.fname, providers.lname, providers.license
     JOIN providersClinics ON providersClinics.providerID = providers.providerID
     WHERE providersClinics.clinicID = $clinicID;
 
+
 --Query for selecting all clinic ID's to populate dropdown boxes
 SELECT clinicID, clinicName FROM clinics
 
@@ -139,14 +140,14 @@ DELETE FROM visits WHERE accountNumber = $accountNumber;
 --  Will follow ON DELETE CASCADE referential action. $providerID used to
 --  denote passed from backend Python representing user input from admin portal.
 --  Example: $providerID = 1
-DELETE FROM providers WHERE providerID = $providerID;
+DELETE FROM providers WHERE fname = $fname AND lname = $lname;
 
 --clinics, Select by clinicID
 --Query for deleting a clinic from the system based on its unique clinicID.
 --  Will follow ON DELETE CASCADE referential action. $clinicID used to
 --  denote passed from backend Python representing user input from admin portal.
 --  Example: $providerID = 1
-DELETE FROM clinics WHERE clinicID = $providerID;
+DELETE FROM clinics WHERE clinicName = $clinicName;
 
 --M:M relationship Delete
 --Query for disassociating a patient from a clinic (relationshipo)
@@ -179,7 +180,7 @@ UPDATE providers SET lname = $fname, licenseType = $licenseType, licenseNumber =
 --Query for updating a clinics's information based on their unique clinicID.
 --  '$' used to denote variables that are passed from backend Python representing user
 --  input in the relavent fields.
-UPDATE clinics SET specialty = $specialty, providerCapacity = $providerCapacity, examRooms = $examRooms, primaryCare = $primaryCare
+UPDATE clinics SET clinicName = $clinicName, specialty = $specialty, providerCapacity = $providerCapacity, examRooms = $examRooms, primaryCare = $primaryCare
     WHERE clinicID = $clinicID;
 
 

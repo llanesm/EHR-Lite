@@ -90,7 +90,8 @@ CREATE TABLE `patientsClinics` (
 
 INSERT INTO clinics (clinicName, specialty, providerCapacity, examRooms, primaryCare)
 VALUES ("Max Health Plaza", "Family Medicine", 5, 5, TRUE),
-("Max Orthopedics", "Orthopedic Surgery", 2, 2, FALSE);
+("Max Orthopedics", "Orthopedic Surgery", 2, 2, FALSE),
+("Max Cardiology", "Cardiology", 2, 2, FALSE);
 
 INSERT INTO providers (fname, lname, licenseType, licenseNumber, specialty, primaryCare)
 VALUES ("John", "Smith", "Medical Doctor", 1234, "Family Medicine", TRUE),
