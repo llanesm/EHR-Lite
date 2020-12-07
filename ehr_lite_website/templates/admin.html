@@ -46,14 +46,16 @@
             <input type="text" id="updatedProviderSpecialty" name="specialty" value="{{ adminProviderObj[0]['specialty'] }}"><br>
             <p>Is this a primary care provider?</p>
             {% if adminProviderObj[0]['primaryCare'] == 1 %}
+                <label for="updateProviderTrue">Yes</label>
                 <input type="radio" id="updateProviderTrue" name="primaryCare" value=1 checked>
+                <label for="updateProviderFalse">No</label>
                 <input type="radio" id="updateProviderFalse" name="primaryCare" value=0><br>
             {% else %}
+                <label for="updateProviderTrue">Yes</label>
                 <input type="radio" id="updateProviderTrue" name="primaryCare" value=1>
+                <label for="updateProviderFalse">No</label>
                 <input type="radio" id="updateProviderFalse" name="primaryCare" value=0 checked><br>
             {% endif %}
-            <label for="updateProviderTrue">Yes</label>
-            <label for="updateProviderFalse">No</label>
             <input type="submit" name="adminUpdateProvider" value="Update Provider Info">
         </form>
         {% endif %}
@@ -66,6 +68,29 @@
             <label for="deletingProviderLname">Last Name</label>
             <input type="text" id="deletingProviderLname" name="lname"><br>
             <input type="submit" name="adminDeleteProviderFromSystem" value="Remove Provider from System">
+        </form>
+    </div>
+</div>
+
+<div id="adminProceduresAndDiagnoses">
+    <div class="recordsbox">
+        <h3>Add Procedure</h3>
+        <form method="POST">
+            <label for="newProcedureCode">Procedure Code</label>
+            <input type="text" id="newProcedureCode" name="procedureCode"><br>
+            <label for="newProcedureName">Procedure Name</label>
+            <input type="text" id="newProcedureName" name="procedureName"><br>
+            <input type="submit" name="adminNewProcedure" value="Add New Procedure">
+        </form>
+    </div>
+    <div class="recordsbox">
+        <h3>Add Diagnosis</h3>
+        <form method="POST">
+            <label for="newDiagnosisCode">Diagnosis Code</label>
+            <input type="text" id="newDiagnosisCode" name="diagnosisCode"><br>
+            <label for="newDiagnosisName">Diagnosis Name</label>
+            <input type="text" id="newDiagnosisName" name="diagnosisName"><br>
+            <input type="submit" name="adminNewDiagnosis" value="Add New Diagnosis">
         </form>
     </div>
 </div>
@@ -97,20 +122,31 @@
             <input type="number" id="updatingClinicID" name="clinicID">
             <input type="submit" name="adminLookupClinic" value="Submit">
         </form><br>
+        {% if adminClinicObj %}
         <form method="POST">
+            <label for="updatedClinicName">Clinic Name</label>
+            <input type="text" id="updatedClinicName" name="clinicName" value="{{ adminClinicObj[0]['clinicName'] }}"><br>
             <label for="updatedClinicSpecialty">Specialty</label>
-            <input type="text" id="updatedClinicSpecialty" name="specialty"><br>
+            <input type="text" id="updatedClinicSpecialty" name="specialty" value="{{ adminClinicObj[0]['specialty'] }}"><br>
             <label for="updatedClinicProviderCapacity">Provider Capacity</label>
-            <input type="number" id="updatedClinicProviderCapacity" name="providerCapacity"><br>
+            <input type="number" id="updatedClinicProviderCapacity" name="providerCapacity" value="{{ adminClinicObj[0]['providerCapacity'] }}"><br>
             <label for="updatedClinicExamRooms">Number of Exam Rooms</label>
-            <input type="number" id="updatedClinicExamRooms" name="examRooms"><br>
+            <input type="number" id="updatedClinicExamRooms" name="examRooms" value="{{ adminClinicObj[0]['examRooms'] }}"><br>
             <p>Is this a primary care clinic?</p>
-            <label for="updatedClinicTrue">Yes</label>
-            <input type="radio" id="updatedClinicTrue" name="primaryCare" value=1>
-            <label for="updatedClinicFalse">No</label>
-            <input type="radio" id="updatedClinicFalse" name="primaryCare" value=0><br>
-            <input type="submit" name="adminUpdateClinic" value="Update Clinic Info"
+            {% if adminClinicObj[0]['primaryCare'] == 1 %}
+                <label for="updatedClinicTrue">Yes</label>
+                <input type="radio" id="updatedClinicTrue" name="primaryCare" value=1 checked>
+                <label for="updatedClinicFalse">No</label>
+                <input type="radio" id="updatedClinicFalse" name="primaryCare" value=0><br>
+            {% else %}
+                <label for="updatedClinicTrue">Yes</label>
+                <input type="radio" id="updatedClinicTrue" name="primaryCare" value=1>
+                <label for="updatedClinicFalse">No</label>
+                <input type="radio" id="updatedClinicFalse" name="primaryCare" value=0 checked><br>
+            {% endif %}
+            <input type="submit" name="adminUpdateClinic" value="Update Clinic Info">
         </form>
+        {% endif %}
     </div>
     <div class="recordsBox">
         <h3>Remove Clinic</h3>
@@ -120,6 +156,30 @@
             <input type="submit" name="adminDeleteClinicFromSystem" value="Remove Clinic from System">
         </form>
     </div>
+</div>
+
+<div id="clincTable">
+    <h3>Health System Clinics</h3>
+    <table>
+        <tr>
+            <th>Clinic ID</th>
+            <th>Clinic Name</th>
+            <th>Specialty</th>
+            <th>Provider Capacity</th>
+            <th>Exam Rooms</th>
+            <th>Primary Care</th>
+        </tr>
+        {% for row in adminClinicDataToDisplayOnPage %}
+        <tr>
+            <td>{{ row['clinicID'] }}</td>
+            <td>{{ row['clinicName'] }}</td>
+            <td>{{ row['specialty'] }}</td>
+            <td>{{ row['providerCapacity'] }}</td>
+            <td>{{ row['examRooms'] }}</td>
+            <td>{{ row['primaryCare'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </div>
 
 <div id="adminTables">

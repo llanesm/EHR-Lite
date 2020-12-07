@@ -86,6 +86,9 @@ SELECT providers.providerID, providers.fname, providers.lname, providers.license
     JOIN providersClinics ON providersClinics.providerID = providers.providerID
     WHERE providersClinics.clinicID = $clinicID;
 
+-- Select all clinics for reference
+SELECT * FROM clinics;
+
 --------------------------------------------------------------------------------
 -- Deletes --
 
@@ -146,5 +149,5 @@ UPDATE providers SET lname = $fname, licenseType = $licenseType, licenseNumber =
 --Query for updating a clinics's information based on their unique clinicID.
 --  '$' used to denote variables that are passed from backend Python representing user
 --  input in the relavent fields.
-UPDATE clinics SET specialty = $specialty, providerCapacity = $providerCapacity, examRooms = $examRooms, primaryCare = $primaryCare
+UPDATE clinics SET clinicName = $clinicName, specialty = $specialty, providerCapacity = $providerCapacity, examRooms = $examRooms, primaryCare = $primaryCare
     WHERE clinicID = $clinicID;
