@@ -30,10 +30,13 @@ def home():
     session["patientID"] = 0
     session["clinicOptions"] = 0
 
+    session['adminClinicDataToDisplayOnPage'] = 0
     session['adminProviderData'] = 0
     session['adminPatientData'] = 0
-    session['providerID'] = 0
+    session['provider_id'] = 0
     session['adminProviderObj'] = 0
+    session['clinic_id'] = 0
+    session['adminClinicObj'] = 0
 
     if request.method =='POST':
         print("REQUEST.FORM: ", request.form)
@@ -519,16 +522,23 @@ def admin():
     db_connection = connect_to_database()
 
     try:
+        session['adminClinicDataToDisplayOnPage']
         session['adminPatientData']
         session['adminProviderData']
-        session['providerID']
+        session['provider_id']
         session['adminProviderObj']
+        session['clinic_id']
+        session['adminClinicObj']
     except KeyError as error:
+        session['adminClinicDataToDisplayOnPage'] = 0
         session['adminPatientData'] = 0
         session['adminProviderData'] = 0
-        session['providerID'] = 0
+        session['provider_id'] = 0
         session['adminProviderObj'] = 0
+        session['clinic_id'] = 0
+        session['adminClinicObj'] = 0
         print("caught keyerror", error)
+
 
     if session['adminPatientData']:
         adminPatientData = session['adminPatientData']
@@ -540,8 +550,8 @@ def admin():
     else:
         adminProviderData = {}
 
-    if session['providerID']:
-        provider_id = session['providerID']
+    if session['provider_id']:
+        provider_id = session['provider_id']
     else:
         provider_id = 0
 
@@ -549,6 +559,41 @@ def admin():
         adminProviderObj = session['adminProviderObj']
     else:
         adminProviderObj = {}
+
+    if session['clinic_id']:
+        clinic_id = session['clinic_id']
+    else:
+        clinic_id = 0
+
+    if session['adminClinicObj']:
+        adminClinicObj = session['adminClinicObj']
+    else:
+        adminClinicObj = {}
+
+    if session['adminClinicDataToDisplayOnPage']:
+        adminClinicDataToDisplayOnPage = session['adminClinicDataToDisplayOnPage']
+    else:
+        # Populate clinics table
+        query = """SELECT * from clinics"""
+
+        result = execute_query(db_connection, query)
+
+        row_headers = [x[0] for x in result.description]
+        row_variables = result.fetchall()
+        json_data = []
+        for row_string in row_variables:
+            json_data.append(dict(zip(row_headers, row_string)))
+        adminClinicDataToDisplayOnPage = json_data
+        session['adminClinicDataToDisplayOnPage'] = adminClinicDataToDisplayOnPage
+
+        # display true or false on table vs 1 or 0
+        for row in adminClinicDataToDisplayOnPage:
+            if row['primaryCare'] == 1:
+                row['primaryCare'] = True
+            else:
+                row['primaryCare'] = False
+
+    session['adminClinicDataToDisplayOnPage'] = adminClinicDataToDisplayOnPage
 
     if request.method == 'POST':
 
@@ -608,15 +653,15 @@ def admin():
 
         # Lookup provider to update
         elif 'adminLookupProvider' in request.form:
-            print("LOOKUP PROVIDER INFO")
+            print("LOOKING UP PROVIDER INFO")
 
             # save provider id for update query form
             provider_id = request.form['providerID']
             if provider_id == '':
                 provider_id = 0
-            session['providerID'] = provider_id
+            session['provider_id'] = provider_id
 
-            query = """SELECT providerID, fname, lname, licenseType, licenseNumber, specialty, primaryCare
+            query = """SELECT fname, lname, licenseType, licenseNumber, specialty, primaryCare
                         FROM providers WHERE providerID = {};""".format(provider_id)
             result = execute_query(db_connection, query)
 
@@ -629,14 +674,13 @@ def admin():
             # save provider info to load into refreshed page
             adminProviderObj = json_data
             session['adminProviderObj'] = adminProviderObj
-            print(adminProviderObj)
 
         # Update provider
         elif 'adminUpdateProvider' in request.form:
             print("UPDATING PROVIDER INFO")
 
             # fetch providerID from lookup form
-            provider_id = session['providerIDforUpdate']
+            provider_id = session['provider_id']
 
             # data for query
             fname = request.form['fname']
@@ -656,11 +700,83 @@ def admin():
             session['adminProviderObj'] = {}
             adminProviderObj = {}
 
+        # Lookup clinic to update
+        elif 'adminLookupClinic' in request.form:
+            print("LOOKING UP CLINIC INFO")
+
+            # save clinicID for update query form
+            clinic_id = request.form['clinicID']
+            if clinic_id == '':
+                clinic_id = 0
+            session['clinic_id'] = clinic_id
+
+            query = """SELECT clinicName, specialty, providerCapacity, examRooms, primaryCare 
+                        FROM clinics WHERE clinicID = {};""".format(clinic_id)
+            result = execute_query(db_connection, query)
+
+            row_headers = [x[0] for x in result.description]
+            row_variables = result.fetchall()  # be careful, this pop's the data as well
+            json_data = []
+            for row_string in row_variables:
+                json_data.append(dict(zip(row_headers, row_string)))
+
+            # save clinic info to load into refreshed page
+            adminClinicObj = json_data
+            session['adminClinicObj'] = adminClinicObj
+
+        # Update clinic
+        elif 'adminUpdateClinic' in request.form:
+            print("UPDATING CLINIC INFO")
+
+            # fetch clinicID from lookup form
+            clinic_id = session['clinic_id']
+
+            # data for query
+            clinic_name = request.form['clinicName']
+            specialty = request.form['specialty']
+            provider_capacity = request.form['providerCapacity']
+            exam_rooms = request.form['examRooms']
+            primary_care = request.form['primaryCare']
+
+            query = """UPDATE clinics SET clinicName = '{}', specialty = '{}', providerCapacity = {}, 
+                        examRooms = {}, primaryCare = {} WHERE clinicID = {};
+                        """.format(clinic_name, specialty, provider_capacity, exam_rooms, primary_care, clinic_id)
+
+            execute_query(db_connection, query)
+
+            # clear the Update Clinic fields
+            session['adminClinicObj'] = {}
+            adminClinicObj = {}
+
+        # Insert procedure
+        elif 'adminNewProcedure' in request.form:
+            print('ADDING NEW PROCEDURE')
+
+            procedure_code = request.form['procedureCode']
+            procedure_name = request.form['procedureName']
+
+            query = """INSERT INTO procedures (procedureCode, procedureName) 
+                        VALUES ('{}', '{}');""".format(procedure_code, procedure_name)
+
+            execute_query(db_connection, query)
+
+        # Insert diagnosis
+        elif 'adminNewDiagnosis' in request.form:
+            print('ADDING NEW DIAGNOSIS')
+
+            diagnosis_code = request.form['diagnosisCode']
+            diagnosis_name = request.form['diagnosisName']
+
+            query = """INSERT INTO diagnoses (diagnosisCode, diagnosisName) 
+                        VALUES ('{}', '{}');""".format(diagnosis_code, diagnosis_name)
+
+            execute_query(db_connection, query)
+
         # Display table of patients that are patients of a given clinic
         elif 'viewPatientsClinicClinicID' in request.form:
             print('LOOKING UP CLINIC')
 
-            if 'clinicID' in request.form:
+            if request.form['clinicID'] != '':
                 patientsClinicID = request.form['clinicID']
             else:
                 patientsClinicID = 0
@@ -684,7 +800,7 @@ def admin():
         elif 'viewClinicsProviders' in request.form:
             print('LOOKING UP CLINIC')
 
-            if 'clinicID' in request.form:
+            if request.form['clinicID'] != '':
                 providersClinicID = request.form['clinicID']
             else:
                 providersClinicID = 0
@@ -712,7 +828,9 @@ def admin():
 
             session['adminProviderData'] = adminProviderData
 
-        return render_template('admin.html', adminPatientData=adminPatientData, adminProviderData=adminProviderData)
+        return render_template('admin.html', adminPatientData=adminPatientData, adminProviderData=adminProviderData,
+                               provider_id=provider_id, adminProviderObj=adminProviderObj, clinic_id=clinic_id,
+                               adminClinicObj=adminClinicObj, adminClinicDataToDisplayOnPage=adminClinicDataToDisplayOnPage)
 
     return render_template('admin.html')
 
