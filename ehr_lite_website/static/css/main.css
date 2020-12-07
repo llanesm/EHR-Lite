@@ -88,3 +88,12 @@ table, th, td{
     display: flex;
     justify-content: space-evenly;
 }
+
+#providersViewVisits{
+    max-width: 25%;
+    table-layout: fixed;
+}
+
+.visitNotes{
+    max-width: 250px;
+}
