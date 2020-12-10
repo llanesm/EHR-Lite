@@ -71,7 +71,29 @@ table, th, td{
     padding: 5px;
 }
 
+#adminProceduresAndDiagnoses{
+    display: flex;
+    justify-self: space-between;
+    border: 1px solid black;
+    margin: 3px;
+    padding: 5px;
+}
+
+#clinicTable{
+    display: flex;
+    justify-content: space-evenly;
+}
+
 #adminTables{
     display: flex;
     justify-content: space-evenly;
+}
+
+#providersViewVisits{
+    max-width: 25%;
+    table-layout: fixed;
+}
+
+.visitNotes{
+    max-width: 250px;
 }

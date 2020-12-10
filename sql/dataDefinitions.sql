@@ -67,7 +67,7 @@ CREATE TABLE `visits` (
     PRIMARY KEY (`accountNumber`),
     FOREIGN KEY (`diagnosisCode`) REFERENCES diagnoses(`diagnosisCode`),
     FOREIGN KEY (`procedureCode`) REFERENCES procedures(`procedureCode`),
-    FOREIGN KEY (`patient`) REFERENCES patients(`medicalRecordNumber`),
+    FOREIGN KEY (`patient`) REFERENCES patients(`medicalRecordNumber`) ON DELETE CASCADE,
     FOREIGN KEY (`provider`) REFERENCES providers(`providerID`),
     FOREIGN KEY (`clinic`) REFERENCES clinics(`clinicID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -90,7 +90,8 @@ CREATE TABLE `patientsClinics` (
 
 INSERT INTO clinics (clinicName, specialty, providerCapacity, examRooms, primaryCare)
 VALUES ("Max Health Plaza", "Family Medicine", 5, 5, TRUE),
-("Max Orthopedics", "Orthopedic Surgery", 2, 2, FALSE);
+("Max Orthopedics", "Orthopedic Surgery", 2, 2, FALSE),
+("Max Cardiology", "Cardiology", 2, 2, FALSE);
 
 INSERT INTO providers (fname, lname, licenseType, licenseNumber, specialty, primaryCare)
 VALUES ("John", "Smith", "Medical Doctor", 1234, "Family Medicine", TRUE),
